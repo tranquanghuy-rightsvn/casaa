@@ -1,0 +1,4 @@
+# Copy thành .dev.vars để chạy `npm run dev` ở máy (file .dev.vars không commit)
+GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxx
+ADMIN_KEY=chuoi-ngau-nhien-dai

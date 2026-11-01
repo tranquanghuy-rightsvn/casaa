@@ -1,0 +1,8 @@
+drive/
+README.md
+.DS_Store
+.playwright-mcp/
+.vite/
+*-local-*.png
+dichvu-*.png
+services-prod.png

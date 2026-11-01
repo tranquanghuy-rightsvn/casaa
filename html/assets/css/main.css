@@ -893,6 +893,7 @@ body:has(.site-header:not(.is-hidden)) .stepnav { top: var(--bar-h); }
   font-size: clamp(28px, 1.8vw + 18px, 38px); line-height: 1.18; letter-spacing: .01em;
 }
 .account-google-btn {
+  text-decoration: none;
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   width: 100%; min-height: 44px; padding: 8px 16px;
   border: 1px solid rgba(0, 0, 0, .22); border-radius: 6px;
@@ -936,11 +937,73 @@ body:has(.site-header:not(.is-hidden)) .stepnav { top: var(--bar-h); }
   background: rgba(186, 18, 23, .08); border: 1px solid rgba(186, 18, 23, .28);
   color: var(--red); font-weight: 500;
 }
+.account-form__status.is-success {
+  padding: 10px 14px; border-radius: 6px;
+  background: rgba(30, 130, 76, .08); border: 1px solid rgba(30, 130, 76, .3);
+  color: #1e824c; font-weight: 500;
+}
+.account-view { display: flex; flex-direction: column; gap: 20px; }
+.account-view[hidden], .account-form [hidden] { display: none; }
+.account-btn:disabled { opacity: .6; cursor: progress; transform: none; }
+.account-divider {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: var(--muted-dark); margin: -4px 0;
+}
+.account-divider::before, .account-divider::after { content: ""; flex: 1; height: 1px; background: rgba(0, 0, 0, .14); }
+.account-profile__head { display: flex; align-items: center; gap: 16px; }
+.account-profile__avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex: none; }
+.account-profile__avatar[hidden] { display: none; }
+.account-profile__email { font-size: 14px; color: var(--muted-dark); margin-top: 4px; overflow-wrap: anywhere; }
+.account-password { border-top: 1px solid rgba(0, 0, 0, .12); padding-top: 16px; }
+.account-password summary {
+  cursor: pointer; font-size: 15px; font-weight: 600; margin-bottom: 4px;
+}
+.account-password[open] summary { margin-bottom: 16px; }
+.account-password summary:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 @media (max-width: 767px) {
   .account-card { grid-template-columns: 1fr; min-height: 0; }
   .account-card__media { aspect-ratio: 16 / 9; }
   .account-form__actions { grid-template-columns: 1fr; }
 }
+
+/* =========================================================
+   Legal pages (/chinh-sach-bao-mat/, /dieu-khoan/) + 404
+   ========================================================= */
+.legal { max-width: 760px; margin-inline: auto; font-size: 16px; line-height: 1.7; }
+.legal__head { margin-bottom: clamp(24px, 3vw, 36px); padding-bottom: 20px; border-bottom: 1px solid rgba(0, 0, 0, .12); }
+.legal__meta { margin-top: 10px; color: var(--muted-dark); font-size: 14px; }
+.legal h2 {
+  font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 1vw + 18px, 30px); line-height: 1.25;
+  margin-top: clamp(32px, 4vw, 44px); margin-bottom: 12px; scroll-margin-top: calc(var(--bar-h) + 24px);
+}
+.legal h3 { font-size: 17px; font-weight: 700; margin-top: 20px; margin-bottom: 8px; }
+.legal p, .legal li { color: rgba(2, 2, 2, .78); }
+.legal p + p { margin-top: 12px; }
+.legal ul { margin-top: 10px; display: grid; gap: 8px; }
+.legal ul li { position: relative; padding-left: 18px; }
+.legal ul li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+.legal ul + p { margin-top: 14px; }
+.legal a { color: var(--red); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.legal strong { color: var(--text-dark); }
+.legal__contact { padding: 18px 20px; background: rgba(0, 0, 0, .04); border-radius: 6px; }
+.legal__contact li::before { display: none; }
+.legal__contact li { padding-left: 0; }
+
+.site-footer__legal { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+.site-footer__legal a { display: inline-flex; align-items: center; min-height: 44px; }
+
+.not-found { min-height: calc(100svh - 120px); align-items: center; }
+.not-found .page-hero__bg { opacity: .3; }
+.not-found .page-hero__inner { padding-block: calc(var(--bar-h) + 48px) 64px; }
+.not-found__code {
+  font-family: var(--font-display); font-weight: 600; line-height: 1;
+  font-size: clamp(88px, 12vw, 160px); color: var(--red-hover); letter-spacing: .04em; margin-bottom: 8px;
+}
+.not-found__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 28px; }
+.not-found__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; margin-top: 22px; font-size: 15px; }
+.not-found__links a { display: inline-flex; align-items: center; min-height: 44px; color: rgba(255, 255, 255, .82); text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) { .not-found__links a:hover { color: var(--white); } }
+@media (max-width: 479px) { .not-found__actions .btn-glass { width: 100%; min-width: 0; } }
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {

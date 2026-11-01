@@ -3,3 +3,6 @@
 .env*
 .vercel
 .vite
+node_modules/
+.wrangler/
+.dev.vars

@@ -1,0 +1,15 @@
+{
+  "name": "casaa-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 migrations apply casaa --remote",
+    "db:migrate:local": "wrangler d1 migrations apply casaa --local",
+    "check": "wrangler deploy --dry-run --outdir .wrangler/dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.2"
+  }
+}

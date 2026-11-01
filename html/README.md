@@ -42,6 +42,8 @@ python3 -m http.server 8123
 
 - URL sạch dạng `/slug/`: mỗi trang là thư mục chứa `index.html`, host tĩnh tự phục vụ `/slug/`. Không dùng redirect `.html` và không cần cấu hình rewrite.
 - Form liên hệ: đặt URL nhận dữ liệu (Formspree, Google Apps Script…) vào `data-endpoint` trong `dich-vu/index.html`. Khi để trống, nút "Gửi thông tin" mở ứng dụng email với nội dung điền sẵn gửi tới dongxuong@casa-evolution.com.
-- Trang tài khoản chỉ kiểm tra dữ liệu phía trình duyệt và hiện thông báo hotline; chưa kết nối backend.
+- Trang tài khoản dùng API của Worker (`worker/src`, cấu hình `wrangler.jsonc` ở thư mục gốc repo): đăng ký/đăng nhập bằng email + mật khẩu hoặc Google, sửa hồ sơ, đổi mật khẩu. Dữ liệu ở D1 `casaa`. API quản trị người dùng: `/api/admin/users` (Bearer `ADMIN_KEY` hoặc tài khoản có `role = 'admin'`).
+  - Chạy ở máy: copy `.dev.vars.example` thành `.dev.vars`, `npm run db:migrate:local`, `npm run dev`.
+  - `html/.assetsignore` loại `drive/`, README và ảnh chụp màn hình khỏi bản deploy.
 - Hero trang chủ tua video theo cuộn: 120 khung WebP trong `assets/hero/d` (ngang, 1280×720) và `assets/hero/m` (dọc, 432×720); logic ở `assets/js/forge.js`.
   Đổi video: cắt lại bằng `ffmpeg -i video.mp4 -vf "select='not(mod(n\,3))'" -fps_mode vfr -start_number 0 d/%03d.png` (chỉnh hệ số 3 để ra đúng 120 khung) rồi chuyển sang WebP bằng `cwebp -q 70`.

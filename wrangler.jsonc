@@ -1,0 +1,45 @@
+// Worker "casaa": phục vụ site tĩnh html/ + API tài khoản /api/* (worker/src).
+// Khóa bí mật KHÔNG để ở đây — đặt bằng `npx wrangler secret put <TÊN>`:
+//   GOOGLE_CLIENT_SECRET, ADMIN_KEY
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "casaa",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2026-10-01",
+
+  "assets": {
+    "directory": "./html",
+    "binding": "ASSETS",
+    // /slug/ tự phục vụ slug/index.html
+    "html_handling": "auto-trailing-slash",
+    // Đường dẫn không tồn tại -> html/404.html (mã 404)
+    "not_found_handling": "404-page",
+    // Worker chạy trước mọi request: /api/*, chuyển www -> root (301), noindex bản workers.dev
+    "run_worker_first": true
+  },
+
+  "routes": [
+    { "pattern": "3d-printedfacade.com", "custom_domain": true },
+    { "pattern": "www.3d-printedfacade.com", "custom_domain": true }
+  ],
+  // Giữ thêm casaa.web100-vn.workers.dev
+  "workers_dev": true,
+  "preview_urls": false,
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "casaa",
+      // Tạo 01/11/2026 (APAC)
+      "database_id": "bb409054-3a45-4053-a243-4e4e6129110e",
+      "migrations_dir": "worker/migrations"
+    }
+  ],
+
+  "vars": {
+    // Client ID của Google OAuth không phải bí mật (secret là GOOGLE_CLIENT_SECRET)
+    "GOOGLE_CLIENT_ID": "532122732035-8ad87tte6deocmp9ddoa7u0kmtj46m4c.apps.googleusercontent.com"
+  },
+
+  "observability": { "enabled": true }
+}

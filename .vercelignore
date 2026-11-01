@@ -4,3 +4,8 @@ drive/
 .git/
 .vercel/
 README.md
+node_modules/
+.wrangler/
+worker/
+wrangler.jsonc
+package*.json
