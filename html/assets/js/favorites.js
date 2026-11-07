@@ -5,7 +5,7 @@
 // - Đăng nhập khi trình duyệt còn mục đã ghim: hỏi có đồng bộ vào tài khoản không.
 import { PROJECTS } from './projects-data.js';
 import { TITLES_EN, catEn } from './projects-en.js';
-import { currentLang } from './lang.js';
+import { currentLang, localPath } from './lang.js';
 import { api, cachedUser, fetchUser, onUserChange } from './session.js';
 
 const KEY = 'casa:favorites:v1';
@@ -348,7 +348,7 @@ export function initFavoritesPreview() {
       link.textContent = list.length
         ? (en ? 'View favourites' : 'Xem thư viện yêu thích')
         : (en ? 'Explore projects' : 'Khám phá dự án');
-      link.href = list.length ? '/thu-vien-yeu-thich/' : '/#du-an';
+      link.href = localPath(list.length ? '/thu-vien-yeu-thich/' : '/#du-an');
     }
     if (note) {
       const n = String(list.length).padStart(2, '0');

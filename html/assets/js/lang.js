@@ -1,21 +1,31 @@
-// Ngôn ngữ: mỗi trang có 2 bản TĨNH — tiếng Việt ở /x/, tiếng Anh ở /en/x/ (html/en/**,
+// Ngôn ngữ: mỗi trang có 2 bản TĨNH — tiếng Việt ở /x/, tiếng Anh ở /en/<slug-tiếng-Anh>/ (routes.js, html/en/**,
 // sinh lần đầu bởi scripts/build_en.py, sau đó sửa qua CMS). Không dịch bằng JS nữa.
 // Ngôn ngữ hiện tại = <html lang>. Nút cờ chỉ chuyển sang URL bản kia của cùng trang.
+import { EN_ROUTES, VI_ROUTES } from './routes.js';
 
 export function currentLang() {
   return document.documentElement.lang === 'en' ? 'en' : 'vi';
 }
 
-/** Đường dẫn bản ngôn ngữ `lang` của trang hiện tại (giữ ?query và #hash). */
-export function langUrl(lang, loc = location) {
-  let path = loc.pathname.replace(/^\/en(?=\/|$)/, '') || '/';
-  if (lang === 'en') path = '/en' + (path === '/' ? '/' : path);
-  return path + loc.search + loc.hash;
+const withSlash = (p) => (p.endsWith('/') ? p : p + '/');
+
+/** Đường dẫn "/x/" (tiếng Việt) -> bản ngôn ngữ `lang` theo routes.js; giữ ?query và #hash. */
+export function routeFor(href, lang) {
+  const m = /^([^?#]*)(.*)$/.exec(href);
+  const path = withSlash(m[1] || '/');
+  const vi = VI_ROUTES[path] || (EN_ROUTES[path] ? path : null);
+  if (!vi) return href; // không có trong bảng (vd /404.html) -> giữ nguyên
+  return (lang === 'en' ? EN_ROUTES[vi] : vi) + m[2];
 }
 
-/** Đường dẫn nội bộ "/x/" theo ngôn ngữ hiện tại (cho chữ/link do JS sinh ra). */
+/** URL bản ngôn ngữ `lang` của trang hiện tại. */
+export function langUrl(lang, loc = location) {
+  return routeFor(loc.pathname + loc.search + loc.hash, lang);
+}
+
+/** Link nội bộ "/x/" theo ngôn ngữ trang hiện tại (cho chữ/link do JS sinh ra). */
 export function localPath(path) {
-  return currentLang() === 'en' && path.startsWith('/') && !path.startsWith('/en/') ? '/en' + path : path;
+  return path.startsWith('/') ? routeFor(path, currentLang()) : path;
 }
 
 export function initLang() {

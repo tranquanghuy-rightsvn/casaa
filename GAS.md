@@ -59,7 +59,11 @@ kynghenguyenminh (nguyenminhltd.vn).
 ## III-a. Ngôn ngữ (chốt 07/11/2026)
 
 - Mỗi trang có 2 file TĨNH: tiếng Việt `html/<slug>/index.html` (URL `/<slug>/`) và tiếng Anh
-  `html/en/<slug>/index.html` (URL `/en/<slug>/`, cùng slug). Trang 404 chỉ có bản VI.
+  với **slug tiếng Anh** cho SEO, vd `/tai-khoan/` ↔ `/en/account/`, `/dich-vu/` ↔ `/en/services/`
+  (file `html/en/account/index.html`). Bảng đường dẫn duy nhất: `html/assets/js/routes.js`
+  (dùng bởi `lang.js`, `build_en.py`, `seo.py`, Worker); CMS chép lại ở `EN_PATHS_` trong
+  `gas/Code.js` — thêm trang mới phải sửa cả 2. Trang 404 chỉ có bản VI.
+- URL tiếng Anh đời đầu `/en/<slug-việt>/` được Worker chuyển hướng 301 sang slug tiếng Anh.
 - Không dịch bằng JS nữa. `lang.js`: ngôn ngữ = `<html lang>`, nút cờ chuyển sang URL bản kia;
   chữ do JS sinh ra dùng `t('vi', 'en')` / `localPath()`.
 - Bản EN khởi tạo 1 lần bằng `scripts/build_en.py` (từ điển `scripts/i18n/dict.json` +
@@ -70,7 +74,7 @@ kynghenguyenminh (nguyenminhltd.vn).
 
 ## III. Giao diện website (soạn trực quan)
 
-- Nút **🇻🇳 Tiếng Việt | 🇬🇧 English** chọn bản đang sửa (iframe nạp `/x/` hoặc `/en/x/`).
+- Nút **🇻🇳 Tiếng Việt | 🇬🇧 English** chọn bản đang sửa (iframe nạp URL VI hoặc URL EN theo `EN_PATHS_`).
   Ảnh mới của bản EN đặt tên `<slug>-en-<key>-<ts>`. Đổi ngôn ngữ khi còn thay đổi chưa lưu → hỏi.
 
 - Tab con theo nhóm trang: Trang chủ · Giải pháp · Sản phẩm (+5 trang chi tiết) · Tiến trình (+5

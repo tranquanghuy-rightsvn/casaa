@@ -108,17 +108,28 @@ PRODUCT_LINES_EN = ["3D-printed ceramic relief art", "3D-printed terracotta wall
                     "3D-printed ceramic breeze blocks", "3D-printed ceramic decor", "3D-printed coral reef structures"]
 
 
+
+def load_routes():
+    """Bảng VI -> EN từ html/assets/js/routes.js (nguồn duy nhất)."""
+    src = (HTML / "assets/js/routes.js").read_text(encoding="utf-8")
+    return json.loads(src.split("/* ROUTES:start */")[1].split("/* ROUTES:end */")[0])
+
+
+EN_ROUTES = load_routes()
+
+
 def file_for(path, lang="vi"):
-    base = HTML / "en" if lang == "en" else HTML
-    return base / "index.html" if path == "/" else base / path.strip("/") / "index.html"
+    if lang == "en":
+        path = EN_ROUTES[path]
+    return HTML / "index.html" if path == "/" else HTML / path.strip("/") / "index.html"
 
 
 def url_for(path, lang="vi"):
-    return SITE + ("/en" + path if lang == "en" else path)
+    return SITE + (EN_ROUTES[path] if lang == "en" else path)
 
 
 def has_en(path):
-    return file_for(path, "en").exists()
+    return path in EN_ROUTES and file_for(path, "en").exists()
 
 
 def esc(s):
@@ -231,7 +242,7 @@ def apply(path, lang):
     m = re.search(r'  <meta name="description" content=".*?">\n', s, re.S)
     s = s[: m.end()] + seo_block(path, title, desc, lang) + s[m.end():]
     f.write_text(s, encoding="utf-8")
-    print("ok", ("/en" if lang == "en" else "") + path)
+    print("ok", EN_ROUTES[path] if lang == "en" else path)
 
 
 def main():

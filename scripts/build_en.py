@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Sinh bản tiếng Anh TĨNH cho mọi trang: html/<slug>/index.html -> html/en/<slug>/index.html.
+"""Sinh bản tiếng Anh TĨNH cho mọi trang: html/<slug>/index.html -> html/en/<slug-tiếng-Anh>/index.html
+(bảng đường dẫn: html/assets/js/routes.js).
 
 Chạy MỘT LẦN để khởi tạo. Sau đó file trong html/en/ là nguồn chân lý của bản tiếng Anh và
 được sửa qua CMS (tab Giao diện website, nút EN) — chạy lại sẽ GHI ĐÈ, nên script từ chối nếu
@@ -76,20 +77,32 @@ META_EN = {
 SKIP_PREFIX = ("/assets/", "/api/", "/admin", "/favicon", "/drive/", "/robots", "/sitemap", "/en/", "/404")
 
 
+
+def load_routes():
+    """Bảng VI -> EN từ html/assets/js/routes.js (nguồn duy nhất)."""
+    src = (HTML / "assets/js/routes.js").read_text(encoding="utf-8")
+    return json.loads(src.split("/* ROUTES:start */")[1].split("/* ROUTES:end */")[0])
+
+
+EN_ROUTES = load_routes()
+
+
 def file_for(path):
     return HTML / "index.html" if path == "/" else HTML / path.strip("/") / "index.html"
 
 
 def en_file_for(path):
-    return HTML / "en" / ("index.html" if path == "/" else path.strip("/") + "/index.html")
+    en = EN_ROUTES[path]
+    return HTML / ("index.html" if en == "/" else en.strip("/") + "/index.html")
 
 
 def en_href(href):
+    """Link nội bộ "/x/#y" -> bản tiếng Anh theo routes.js (slug tiếng Anh); ngoài bảng thì giữ nguyên."""
     if not href.startswith("/") or href.startswith("//") or href.startswith(SKIP_PREFIX):
         return href
-    if re.search(r"\.(png|jpe?g|webp|svg|ico|pdf|xml|txt|mp4|css|js)(\?|#|$)", href):
-        return href
-    return "/en" + href
+    path, rest = re.match(r"([^?#]*)(.*)", href).groups()
+    path = path if path.endswith("/") else path + "/"
+    return EN_ROUTES[path] + rest if path in EN_ROUTES else href
 
 
 def tr_text(seg, stats):
@@ -164,7 +177,7 @@ def translate(s, path, stats):
     s = s.replace('data-lang-btn="vi" aria-pressed="true"', 'data-lang-btn="vi" aria-pressed="false"')
     s = s.replace('data-lang-btn="en" aria-pressed="false"', 'data-lang-btn="en" aria-pressed="true"')
     # Đăng nhập Google từ trang EN quay về trang EN
-    s = s.replace("/api/auth/google?next=/tai-khoan/", "/api/auth/google?next=/en/tai-khoan/")
+    s = s.replace("/api/auth/google?next=/tai-khoan/", "/api/auth/google?next=" + EN_ROUTES["/tai-khoan/"])
     return s
 
 
@@ -183,7 +196,7 @@ def main():
         s = translate(file_for(path).read_text(encoding="utf-8"), path, stats)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(s, encoding="utf-8")
-        print(f"ok /en{path}: dịch {stats['hit']}, còn tiếng Việt {len(stats['miss'])}")
+        print(f"ok {EN_ROUTES[path]}: dịch {stats['hit']}, còn tiếng Việt {len(stats['miss'])}")
         for k in stats["miss"]:
             total_miss[k] = total_miss.get(k, 0) + 1
     if total_miss:

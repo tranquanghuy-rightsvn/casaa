@@ -4,6 +4,12 @@ import { json, HttpError, checkOrigin } from "./http.js";
 import { handleAccount } from "./account.js";
 import { handleAdmin } from "./admin.js";
 import { handleFavorites } from "./favorites.js";
+import { EN_ROUTES } from "../../html/assets/js/routes.js";
+
+// URL tiếng Anh đời đầu dùng slug tiếng Việt (/en/dich-vu/) -> 301 sang slug tiếng Anh (/en/services/)
+const OLD_EN = Object.fromEntries(
+  Object.entries(EN_ROUTES).filter(([vi]) => vi !== "/").map(([vi, en]) => ["/en" + vi, en])
+);
 
 const CANONICAL_HOST = "3d-printedfacade.com";
 
@@ -38,6 +44,11 @@ export default {
     // Canonical là domain gốc, không www
     if (url.hostname === "www." + CANONICAL_HOST) {
       url.hostname = CANONICAL_HOST;
+      return Response.redirect(url.toString(), 301);
+    }
+    const oldEn = OLD_EN[url.pathname.endsWith("/") ? url.pathname : url.pathname + "/"];
+    if (oldEn) {
+      url.pathname = oldEn;
       return Response.redirect(url.toString(), 301);
     }
     if (!url.pathname.startsWith("/api/")) {
