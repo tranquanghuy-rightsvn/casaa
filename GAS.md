@@ -92,7 +92,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 | Zalo (menu/footer) | `data-cms-g-href="zalo"` | nhập số → `https://zalo.me/<số>` |
 | Nút gọi nổi, nút Zalo nổi | `data-cms-g-href/aria="float_phone|float_zalo"` | |
 | Video hero trang chủ | ghi đè `html/assets/hero/{d,m}/000–119.webp` | xem dưới |
-| Tiêu đề, mô tả, H1, banner từng trang | `<title>`, meta description, og/twitter, JSON-LD; H1 = mốc trang của thẻ h1; banner = ảnh `data-cms-img` đầu tiên trong `<main>` | 1 commit/trang |
+| Tiêu đề, mô tả, H1, banner từng trang | `<title>`, meta description, og/twitter, JSON-LD; H1 = mốc trang của thẻ h1; banner = ảnh `data-cms-img` đầu tiên trong `<main>` | 1 commit/trang. H1 có thẻ con (vd 2 dòng hero trang chủ) hiện thành từng ô "Phần 1, 2…" — KHÔNG hiện HTML; lưu chỉ thay chữ, giữ nguyên thẻ |
 
 - Thông tin liên hệ nằm TRONG nội dung trang (vd khối liên hệ /dich-vu/, trang pháp lý) là mốc
   riêng của trang — sửa ở tab Giao diện, không tự đồng bộ theo Quản lý chung.
