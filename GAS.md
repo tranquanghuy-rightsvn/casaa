@@ -48,7 +48,7 @@ kynghenguyenminh (nguyenminhltd.vn).
 | Người dùng website — xem danh sách | ✅ | ✅ | ✅ |
 | Người dùng website — sửa tên/SĐT/ghi chú, khoá/mở, đăng xuất mọi thiết bị, xoá | ✅ | ✅ | — |
 | Liên hệ — xem danh sách | ✅ | ✅ | ✅ |
-| Liên hệ — đánh dấu đã xử lý, ghi chú, xoá, đổi email nhận thông báo | ✅ | ✅ | — |
+| Liên hệ — đánh dấu đã xử lý, ghi chú, xoá | ✅ | ✅ | — |
 | Quản trị viên — xem | ✅ | ✅ | — |
 | Quản trị viên — thêm/đổi vai trò/xoá | mọi vai trò (root/admin/editor) | chỉ editor | — |
 
@@ -119,9 +119,10 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 - `doPost` → `handleLead_`: honeypot `website` (khác rỗng = bot, trả ok nhưng bỏ qua); kiểm tra
   họ tên ≥2 ký tự, SĐT VN, email (không bắt buộc); giới hạn 1 lần/120 giây/số điện thoại;
   LockService khi ghi sheet `Leads`.
-- Gửi mail báo tới Script Property `LEAD_NOTIFY_EMAIL` (mặc định `dongxuong@casa-evolution.com`,
-  nhiều email cách bằng dấu phẩy, để trống trong CMS = tắt), replyTo = email khách. Dùng chung
-  quota MailApp (~100/ngày) với OTP đăng nhập.
+- Gửi mail báo tới **đúng 1 email** ở Script Property `NOTIFY_EMAIL` (chỉ đổi trong Project
+  Settings → Script Properties, KHÔNG có ô sửa trong CMS). Chưa có / sai định dạng / nhiều email
+  → không gửi mail (lead vẫn lưu), CMS mục Liên hệ và log `setup()` báo rõ. replyTo = email
+  khách. Dùng chung quota MailApp (~100/ngày) với OTP đăng nhập.
 - CMS mục **Liên hệ**: lọc Chưa xử lý / Đã xử lý / Tất cả, tìm kiếm, badge số chưa xử lý ở sidebar.
 
 ## VI. UX chung
@@ -151,7 +152,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 | `SITE_API_KEY` | ✅ | trùng secret `ADMIN_KEY` của Worker `casaa`. Đang để trong `gas/Secrets.js` (chỉ nằm trong project Apps Script, không track git); Script Property cùng tên sẽ ghi đè. Đổi key: `wrangler secret put ADMIN_KEY` + sửa `gas/Secrets.js` + `clasp push`. |
 | `GITHUB_OWNER` / `GITHUB_REPO` / `GITHUB_BRANCH` | — | mặc định `tranquanghuy-rightsvn` / `casaa` / `master` |
 | `SITE_BASE_URL` | — | mặc định `https://3d-printedfacade.com` |
-| `LEAD_NOTIFY_EMAIL` | — | mặc định `dongxuong@casa-evolution.com`; sửa trong CMS mục Liên hệ |
+| `NOTIFY_EMAIL` | nên có | đúng 1 email nhận thông báo khi có liên hệ mới |
 | `SPREADSHEET_ID` | tự sinh | |
 
 ## IX. Cài đặt / deploy
