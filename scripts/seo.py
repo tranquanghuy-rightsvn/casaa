@@ -92,31 +92,60 @@ PAGES = {
 }
 
 
-def file_for(path):
-    return HTML / "index.html" if path == "/" else HTML / path.strip("/") / "index.html"
+# Tên trang tiếng Anh (breadcrumb / JSON-LD của bản /en/)
+NAMES_EN = {
+    "/": "Home", "/san-pham/": "Products", "/dich-vu/": "Services", "/tien-trinh/": "Process",
+    "/gioi-thieu/": "About Casa", "/tai-khoan/": "Account", "/chinh-sach-bao-mat/": "Privacy policy",
+    "/dieu-khoan/": "Terms of use", "/giai-phap/": "3D ceramic solutions",
+    "/san-pham/lam-che-nang/": "Sun louvers", "/san-pham/gach-op-chuyen-mau/": "Gradient-glaze tiles",
+    "/san-pham/gach-phu-dieu/": "Relief tiles", "/san-pham/artwork-decor/": "Artwork & decor",
+    "/san-pham/ran-san-ho/": "Coral reef", "/tien-trinh/cau-chuyen/": "Story",
+    "/tien-trinh/nghien-cuu/": "Research", "/tien-trinh/thiet-ke/": "Design",
+    "/tien-trinh/san-xuat/": "Production", "/tien-trinh/lap-dat/": "Installation",
+    "/thu-vien-yeu-thich/": "Favourites",
+}
+PRODUCT_LINES_EN = ["3D-printed ceramic relief art", "3D-printed terracotta wall cladding",
+                    "3D-printed ceramic breeze blocks", "3D-printed ceramic decor", "3D-printed coral reef structures"]
+
+
+def file_for(path, lang="vi"):
+    base = HTML / "en" if lang == "en" else HTML
+    return base / "index.html" if path == "/" else base / path.strip("/") / "index.html"
+
+
+def url_for(path, lang="vi"):
+    return SITE + ("/en" + path if lang == "en" else path)
+
+
+def has_en(path):
+    return file_for(path, "en").exists()
 
 
 def esc(s):
     return s.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
 
 
-def crumbs(path):
+def name_for(path, lang):
+    return NAMES_EN.get(path, PAGES[path][0]) if lang == "en" else PAGES[path][0]
+
+
+def crumbs(path, lang="vi"):
     """Trang chủ > các trang cha có trong PAGES > trang hiện tại."""
-    out = [("Trang chủ", "/")]
+    out = [(name_for("/", lang) if lang == "en" else "Trang chủ", "/")]
     segs = path.strip("/").split("/")
     for i in range(1, len(segs) + 1):
         p = "/" + "/".join(segs[:i]) + "/"
         if p in PAGES:
-            out.append((PAGES[p][0], p))
+            out.append((name_for(p, lang), p))
     return out
 
 
-def graph_for(path, title, desc):
+def graph_for(path, title, desc, lang="vi"):
     name, kind, *_ = PAGES[path]
-    url = SITE + path
+    url = url_for(path, lang)
     page = {
         "@type": kind, "@id": f"{url}#webpage", "url": url, "name": title, "description": desc,
-        "inLanguage": "vi-VN", "isPartOf": {"@id": SITE_ID}, "about": {"@id": ORG_ID},
+        "inLanguage": "en-US" if lang == "en" else "vi-VN", "isPartOf": {"@id": SITE_ID}, "about": {"@id": ORG_ID},
         "primaryImageOfPage": {"@type": "ImageObject", "url": OG_IMAGE},
         "dateModified": TODAY,
     }
@@ -126,67 +155,90 @@ def graph_for(path, title, desc):
         graph.append({
             "@type": "BreadcrumbList", "@id": f"{url}#breadcrumb",
             "itemListElement": [
-                {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + p}
-                for i, (n, p) in enumerate(crumbs(path))
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": url_for(p, lang)}
+                for i, (n, p) in enumerate(crumbs(path, lang))
             ],
         })
     if path == "/san-pham/":
+        names = PRODUCT_LINES_EN if lang == "en" else [n for n, _ in PRODUCT_LINES]
         page["mainEntity"] = {
             "@type": "ItemList",
             "itemListElement": [
-                {"@type": "ListItem", "position": i + 1, "name": n, "url": f"{url}#{a}"}
-                for i, (n, a) in enumerate(PRODUCT_LINES)
+                {"@type": "ListItem", "position": i + 1, "name": names[i], "url": f"{url}#{a}"}
+                for i, (_, a) in enumerate(PRODUCT_LINES)
             ],
         }
     if path == "/dich-vu/":
         graph.append({
             "@type": "Service", "@id": f"{url}#service",
-            "name": "Thiết kế và sản xuất gạch gốm kiến trúc in 3D",
-            "serviceType": "Tư vấn thiết kế, chế tác mock-up 1:1 và sản xuất gạch gốm kiến trúc in 3D",
+            "name": "3D-printed architectural ceramic design and production" if lang == "en"
+            else "Thiết kế và sản xuất gạch gốm kiến trúc in 3D",
+            "serviceType": "Design consultation, 1:1 mock-ups and production of 3D-printed architectural ceramics" if lang == "en"
+            else "Tư vấn thiết kế, chế tác mock-up 1:1 và sản xuất gạch gốm kiến trúc in 3D",
             "description": desc, "provider": {"@id": ORG_ID}, "areaServed": "VN", "url": url,
         })
     return {"@context": "https://schema.org", "@graph": graph}
 
 
-def seo_block(path, title, desc):
+def seo_block(path, title, desc, lang="vi"):
     indexable = PAGES[path][2]
-    url = SITE + path
+    url = url_for(path, lang)
+    en = lang == "en"
     lines = [
         f'<link rel="canonical" href="{url}">',
         f'<meta name="robots" content="{"index, follow, max-image-preview:large" if indexable else "noindex, follow"}">',
+    ]
+    if has_en(path):
+        lines += [
+            f'<link rel="alternate" hreflang="vi" href="{url_for(path)}">',
+            f'<link rel="alternate" hreflang="en" href="{url_for(path, "en")}">',
+            f'<link rel="alternate" hreflang="x-default" href="{url_for(path)}">',
+        ]
+    lines += [
         '<link rel="apple-touch-icon" href="/favicon.png">',
         '<meta property="og:type" content="website">',
         '<meta property="og:site_name" content="Casa+">',
-        '<meta property="og:locale" content="vi_VN">',
+        f'<meta property="og:locale" content="{"en_US" if en else "vi_VN"}">',
+    ]
+    if has_en(path):
+        lines.append(f'<meta property="og:locale:alternate" content="{"vi_VN" if en else "en_US"}">')
+    lines += [
         f'<meta property="og:url" content="{url}">',
         f'<meta property="og:title" content="{esc(title)}">',
         f'<meta property="og:description" content="{esc(desc)}">',
         f'<meta property="og:image" content="{OG_IMAGE}">',
         '<meta property="og:image:width" content="1200">',
         '<meta property="og:image:height" content="630">',
-        '<meta property="og:image:alt" content="Không gian nội thất ốp gạch gốm kiến trúc Casa+">',
+        '<meta property="og:image:alt" content="' + ("Interior clad with Casa+ architectural ceramic tiles" if en
+                                                     else "Không gian nội thất ốp gạch gốm kiến trúc Casa+") + '">',
         '<meta name="twitter:card" content="summary_large_image">',
         f'<meta name="twitter:title" content="{esc(title)}">',
         f'<meta name="twitter:description" content="{esc(desc)}">',
         f'<meta name="twitter:image" content="{OG_IMAGE}">',
         '<script type="application/ld+json">'
-        + json.dumps(graph_for(path, title, desc), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+        + json.dumps(graph_for(path, title, desc, lang), ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
         + "</script>",
     ]
     return "  <!-- seo:start -->\n" + "".join(f"  {l}\n" for l in lines) + "  <!-- seo:end -->\n"
 
 
+def apply(path, lang):
+    f = file_for(path, lang)
+    s = f.read_text(encoding="utf-8")
+    s = re.sub(r"  <!-- seo:start -->.*?<!-- seo:end -->\n", "", s, flags=re.S)
+    title = re.search(r"<title>(.*?)</title>", s, re.S).group(1).strip()
+    desc = re.search(r'<meta name="description" content="(.*?)">', s, re.S).group(1).strip()
+    m = re.search(r'  <meta name="description" content=".*?">\n', s, re.S)
+    s = s[: m.end()] + seo_block(path, title, desc, lang) + s[m.end():]
+    f.write_text(s, encoding="utf-8")
+    print("ok", ("/en" if lang == "en" else "") + path)
+
+
 def main():
     for path in PAGES:
-        f = file_for(path)
-        s = f.read_text(encoding="utf-8")
-        s = re.sub(r"  <!-- seo:start -->.*?<!-- seo:end -->\n", "", s, flags=re.S)
-        title = re.search(r"<title>(.*?)</title>", s, re.S).group(1).strip()
-        desc = re.search(r'<meta name="description" content="(.*?)">', s, re.S).group(1).strip()
-        m = re.search(r'  <meta name="description" content=".*?">\n', s, re.S)
-        s = s[: m.end()] + seo_block(path, title, desc) + s[m.end():]
-        f.write_text(s, encoding="utf-8")
-        print("ok", path)
+        apply(path, "vi")
+        if has_en(path):
+            apply(path, "en")
 
     # Trang 404: chỉ noindex, không canonical / Open Graph
     f = HTML / "404.html"
@@ -196,14 +248,20 @@ def main():
     f.write_text(s, encoding="utf-8")
     print("ok /404.html")
 
-    urls = "".join(
-        f"  <url>\n    <loc>{SITE}{p}</loc>\n    <lastmod>{TODAY}</lastmod>\n"
-        f"    <changefreq>{v[4]}</changefreq>\n    <priority>{v[3]}</priority>\n  </url>\n"
-        for p, v in PAGES.items() if v[2]
-    )
+    def entry(p, v, lang):
+        alt = ""
+        if has_en(p):
+            alt = (f'    <xhtml:link rel="alternate" hreflang="vi" href="{url_for(p)}"/>\n'
+                   f'    <xhtml:link rel="alternate" hreflang="en" href="{url_for(p, "en")}"/>\n')
+        return (f"  <url>\n    <loc>{url_for(p, lang)}</loc>\n{alt}    <lastmod>{TODAY}</lastmod>\n"
+                f"    <changefreq>{v[4]}</changefreq>\n    <priority>{v[3]}</priority>\n  </url>\n")
+
+    urls = "".join(entry(p, v, "vi") for p, v in PAGES.items() if v[2])
+    urls += "".join(entry(p, v, "en") for p, v in PAGES.items() if v[2] and has_en(p))
     (HTML / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n",
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+        + urls + "</urlset>\n",
         encoding="utf-8",
     )
     (HTML / "robots.txt").write_text(

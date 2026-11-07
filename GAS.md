@@ -56,7 +56,22 @@ kynghenguyenminh (nguyenminhltd.vn).
 - "Người dùng website" = tài khoản khách đăng ký trên site (D1 `users`), khác hẳn quản trị viên
   CMS (sheet `Admins`). Cột `role` của D1 KHÔNG chỉnh qua CMS.
 
+## III-a. Ngôn ngữ (chốt 07/11/2026)
+
+- Mỗi trang có 2 file TĨNH: tiếng Việt `html/<slug>/index.html` (URL `/<slug>/`) và tiếng Anh
+  `html/en/<slug>/index.html` (URL `/en/<slug>/`, cùng slug). Trang 404 chỉ có bản VI.
+- Không dịch bằng JS nữa. `lang.js`: ngôn ngữ = `<html lang>`, nút cờ chuyển sang URL bản kia;
+  chữ do JS sinh ra dùng `t('vi', 'en')` / `localPath()`.
+- Bản EN khởi tạo 1 lần bằng `scripts/build_en.py` (từ điển `scripts/i18n/dict.json` +
+  `extra.json`). Từ đó **file EN là nguồn chân lý**, sửa qua CMS; KHÔNG chạy lại build_en (có
+  `--force` mới ghi đè). Trang mới: `python3 scripts/build_en.py --only <slug>`.
+- Hai bản dùng CHUNG số mốc `data-cms-*` (EN sinh từ VI), nhưng nội dung sửa độc lập.
+- SEO: canonical riêng, `hreflang` vi/en/x-default, `og:locale`, sitemap có cả 2 bản (`seo.py`).
+
 ## III. Giao diện website (soạn trực quan)
+
+- Nút **🇻🇳 Tiếng Việt | 🇬🇧 English** chọn bản đang sửa (iframe nạp `/x/` hoặc `/en/x/`).
+  Ảnh mới của bản EN đặt tên `<slug>-en-<key>-<ts>`. Đổi ngôn ngữ khi còn thay đổi chưa lưu → hỏi.
 
 - Tab con theo nhóm trang: Trang chủ · Giải pháp · Sản phẩm (+5 trang chi tiết) · Tiến trình (+5
   trang con) · Dịch vụ · Giới thiệu · Thư viện yêu thích · Tài khoản · Pháp lý (2) · Trang 404.
@@ -78,7 +93,9 @@ kynghenguyenminh (nguyenminhltd.vn).
 - Bản tiếng Anh dịch theo câu VI chính xác (`i18n-phrases.js`): sửa câu VI qua CMS thì bản EN
   của câu đó hiện tiếng Việt cho tới khi dev bổ sung bản dịch.
 
-## IV. Quản lý chung (áp dụng TẤT CẢ trang trong 1 commit)
+## IV. Quản lý chung (áp dụng TẤT CẢ trang VI + EN trong 1 commit)
+
+Tiêu đề/H1/banner từng trang có nút VI/EN riêng (`savePageMeta(token, slug, lang, data)`).
 
 Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 
@@ -88,12 +105,12 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 | Favicon | `data-cms-g-href="favicon"` | PNG |
 | Banner trích dẫn (cuối trang) | `data-cms-g-src="quote_banner"` | |
 | Ảnh chia sẻ MXH | ghi đè `html/assets/img/og-cover.jpg` | JPEG 1200px |
-| Tên công ty, địa chỉ, giờ mở cửa | `data-cms-g="company|address|hours"` | chữ |
+| Tên công ty, địa chỉ, giờ mở cửa | `data-cms-g="company|address|hours"` | chữ, **2 ô VI/EN** (áp cho file VI / file EN) |
 | Hotline | `data-cms-g="phone"` + `data-cms-g-href="phone"` | href `tel:<số>` |
 | Email | `data-cms-g="email"` + `data-cms-g-href="email"` | href `mailto:` |
 | Facebook, YouTube, Pinterest | `data-cms-g-href="facebook|youtube|pinterest"` | phải http(s) |
 | Zalo (menu/footer) | `data-cms-g-href="zalo"` | nhập số → `https://zalo.me/<số>` |
-| Nút gọi nổi, nút Zalo nổi | `data-cms-g-href/aria="float_phone|float_zalo"` | |
+| Nút gọi nổi, nút Zalo nổi | `data-cms-g-href/aria="float_phone|float_zalo"` | aria-label "Gọi…" / "Call…" theo ngôn ngữ file |
 | Video hero trang chủ | ghi đè `html/assets/hero/{d,m}/000–119.webp` | xem dưới |
 | Tiêu đề, mô tả, H1, banner từng trang | `<title>`, meta description, og/twitter, JSON-LD; H1 = mốc trang của thẻ h1; banner = ảnh `data-cms-img` đầu tiên trong `<main>` | 1 commit/trang. H1 có thẻ con (vd 2 dòng hero trang chủ) hiện thành từng ô "Phần 1, 2…" — KHÔNG hiện HTML; lưu chỉ thay chữ, giữ nguyên thẻ |
 

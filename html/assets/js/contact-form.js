@@ -1,3 +1,4 @@
+import { currentLang, t } from './lang.js';
 // Contact form: validates in Vietnamese, then sends to data-endpoint (JSON POST)
 // or, when no endpoint is configured, opens the visitor's email app with the details filled in.
 const TO = 'dongxuong@casa-evolution.com';
@@ -19,13 +20,13 @@ export function initContactForm() {
   }
 
   const rules = {
-    ho_ten: (v) => (v.trim().length >= 2 ? '' : 'Vui lòng nhập họ và tên.'),
+    ho_ten: (v) => (v.trim().length >= 2 ? '' : t('Vui lòng nhập họ và tên.', 'Please enter your full name.')),
     so_dien_thoai: (v) => {
       const digits = v.replace(/[\s.\-()]/g, '');
-      if (!digits) return 'Vui lòng nhập số điện thoại.';
-      return /^(\+?84|0)\d{9,10}$/.test(digits) ? '' : 'Số điện thoại chưa đúng, ví dụ: 0763 161 286.';
+      if (!digits) return t('Vui lòng nhập số điện thoại.', 'Please enter your phone number.');
+      return /^(\+?84|0)\d{9,10}$/.test(digits) ? '' : t('Số điện thoại chưa đúng, ví dụ: 0763 161 286.', 'Invalid phone number, e.g. 0763 161 286.');
     },
-    email: (v) => (!v.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Email chưa đúng định dạng, ví dụ: ten@congty.vn.'),
+    email: (v) => (!v.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : t('Email chưa đúng định dạng, ví dụ: ten@congty.vn.', 'Invalid email address, e.g. name@company.com.')),
   };
 
   const check = (input) => {
@@ -60,14 +61,14 @@ export function initContactForm() {
 
     if (endpoint) {
       submit.disabled = true;
-      submit.textContent = 'Đang gửi…';
+      submit.textContent = t('Đang gửi…', 'Sending…');
       try {
         // Endpoint là web app Google Apps Script (CMS): gửi text/plain để không phát sinh
         // CORS preflight (GAS không trả lời OPTIONS); GAS vẫn đọc được JSON trong thân.
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ ...data, nhu_cau: kind, trang: location.pathname }),
+          body: JSON.stringify({ ...data, nhu_cau: kind, trang: location.pathname, lang: currentLang() }),
         });
         const out = await res.json().catch(() => ({}));
         if (!res.ok || !out.ok) {
@@ -77,15 +78,15 @@ export function initContactForm() {
         }
         form.reset();
         status.classList.add('is-ok');
-        status.textContent = 'Đã gửi thông tin. Casa+ sẽ gọi lại cho bạn trong giờ làm việc.';
+        status.textContent = t('Đã gửi thông tin. Casa+ sẽ gọi lại cho bạn trong giờ làm việc.', 'Thank you! Casa+ will call you back during working hours.');
       } catch (err) {
         status.classList.add('is-error');
         status.textContent = err.server
           ? err.message
-          : 'Chưa gửi được thông tin. Kiểm tra kết nối mạng rồi thử lại, hoặc gọi 0763 161 286.';
+          : t('Chưa gửi được thông tin. Kiểm tra kết nối mạng rồi thử lại, hoặc gọi 0763 161 286.', 'Could not send your details. Check your connection and try again, or call +84 763 161 286.');
       } finally {
         submit.disabled = false;
-        submit.textContent = 'Gửi thông tin';
+        submit.textContent = t('Gửi thông tin', 'Send details');
       }
       return;
     }
@@ -99,6 +100,6 @@ export function initContactForm() {
     ].join('\n');
     location.href = `mailto:${TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     status.classList.add('is-ok');
-    status.textContent = 'Đã mở ứng dụng email với thông tin của bạn. Bấm Gửi trong email để hoàn tất.';
+    status.textContent = t('Đã mở ứng dụng email với thông tin của bạn. Bấm Gửi trong email để hoàn tất.', 'Your email app has opened with your details. Press Send to finish.');
   });
 }

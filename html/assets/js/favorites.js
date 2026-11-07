@@ -211,8 +211,9 @@ function paint(btn, index) {
   const on = isFavorite(index);
   btn.classList.toggle('is-on', on);
   btn.setAttribute('aria-pressed', String(on));
-  btn.setAttribute('aria-label', on ? 'Bỏ yêu thích dự án' : 'Thêm dự án vào thư viện yêu thích');
-  btn.title = on ? 'Bỏ yêu thích' : 'Thêm vào thư viện yêu thích';
+  const en = currentLang() === 'en';
+  btn.setAttribute('aria-label', on ? (en ? 'Remove project from favourites' : 'Bỏ yêu thích dự án') : (en ? 'Add project to favourites' : 'Thêm dự án vào thư viện yêu thích'));
+  btn.title = on ? (en ? 'Remove from favourites' : 'Bỏ yêu thích') : (en ? 'Add to favourites' : 'Thêm vào thư viện yêu thích');
 }
 
 // Thông báo cho trình đọc màn hình; `toast` = hiện thêm một dòng nhỏ trên màn hình.
@@ -232,7 +233,8 @@ function say(text, toast = true) {
 }
 
 function announce(on) {
-  say(on ? 'Đã thêm vào thư viện yêu thích.' : 'Đã bỏ khỏi thư viện yêu thích.', false);
+  const en = currentLang() === 'en';
+  say(on ? (en ? 'Added to favourites.' : 'Đã thêm vào thư viện yêu thích.') : (en ? 'Removed from favourites.' : 'Đã bỏ khỏi thư viện yêu thích.'), false);
 }
 
 // Wraps each .pin so the favourite button can sit next to it (a button
@@ -280,7 +282,7 @@ function cardMarkup(item, index) {
         <img src="${item.img}" width="${item.w}" height="${item.h}" loading="lazy" decoding="async" alt="${title}">
         <span class="pin__info">${title}<small>${cat}${item.domain ? ` · ${item.domain}` : ''}</small></span>
       </a>
-      <button class="fav-card__remove" type="button" data-fav-remove="${index}" aria-label="Bỏ yêu thích ${title}">
+      <button class="fav-card__remove" type="button" data-fav-remove="${index}" aria-label="${en ? 'Remove' : 'Bỏ yêu thích'} ${title}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </div>`;

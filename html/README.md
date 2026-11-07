@@ -31,7 +31,7 @@ index.html              các trang con nằm trong thư mục riêng
 - `assets/js/projects-data.js` giữ tiêu đề/nguồn của 34 dự án cho lightbox; danh sách 34 thẻ dự án đã nằm sẵn trong `index.html`.
 - Ghim dự án: `assets/js/favorites.js`. Chưa đăng nhập → lưu `localStorage` (`casa:favorites:v1`); đã đăng nhập → lưu theo tài khoản (API `/api/me/favorites`, bảng D1 `favorites`, migration `0002_favorites.sql`). Khi đăng nhập mà trình duyệt còn mục đã ghim, hiện hộp hỏi "Đồng bộ vào tài khoản" (đồng ý = gộp vào tài khoản và xoá bản trên trình duyệt; "Để sau" = không hỏi lại cho đến khi danh sách đổi). Trạng thái đăng nhập dùng chung ở `assets/js/session.js`.
 - Thêm trang mới: chạy `python3 scripts/site_chrome.py` (gắn Google Analytics + link pháp lý ở footer), thêm đường dẫn vào `PAGES` trong `scripts/seo.py` rồi chạy `python3 scripts/seo.py`.
-- Đổi ngôn ngữ VI/EN: `assets/js/lang.js` đọc `data-i18n` trên từng phần tử, lưu lựa chọn ở `localStorage` (`casa:lang`). Muốn dịch thêm, gắn `data-i18n="key"` và bổ sung key vào từ điển `EN` trong file này.
+- Ngôn ngữ: 2 bản tĩnh — tiếng Việt `/x/`, tiếng Anh `/en/x/` (`html/en/`). Nút cờ chuyển URL (`assets/js/lang.js`). Bản EN khởi tạo bằng `scripts/build_en.py`, sau đó sửa qua CMS (xem `GAS.md` mục III-a).
 - Ảnh/video gốc từ Drive và Figma nằm trong `drive/` (không đưa lên hosting).
 
 ## Chạy thử

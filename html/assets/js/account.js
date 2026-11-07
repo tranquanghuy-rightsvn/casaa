@@ -1,17 +1,17 @@
 // Trang /tai-khoan/: đăng nhập, đăng ký (email/mật khẩu hoặc Google) và dashboard người dùng.
 // API ở Worker (worker/src/account.js), phiên lưu trong cookie HttpOnly.
 import { api, fetchUser, setUser } from './session.js';
-import { currentLang } from './lang.js';
+import { currentLang, t } from './lang.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GOOGLE_ERRORS = {
-  google_unconfigured: 'Đăng nhập Google chưa được bật. Vui lòng dùng email hoặc liên hệ hotline 0763 161 286.',
-  google_cancelled: 'Bạn đã huỷ đăng nhập bằng Google.',
-  google_state: 'Phiên đăng nhập Google đã hết hạn, vui lòng thử lại.',
-  google_failed: 'Không đăng nhập được bằng Google, vui lòng thử lại.',
-  google_unverified: 'Email Google của bạn chưa được xác minh.',
-  locked: 'Tài khoản đã bị khoá. Vui lòng liên hệ hotline 0763 161 286.',
+  google_unconfigured: ['Đăng nhập Google chưa được bật. Vui lòng dùng email hoặc liên hệ hotline 0763 161 286.', 'Google sign-in is not enabled. Please use email or call +84 763 161 286.'],
+  google_cancelled: ['Bạn đã huỷ đăng nhập bằng Google.', 'You cancelled Google sign-in.'],
+  google_state: ['Phiên đăng nhập Google đã hết hạn, vui lòng thử lại.', 'The Google sign-in session expired, please try again.'],
+  google_failed: ['Không đăng nhập được bằng Google, vui lòng thử lại.', 'Could not sign in with Google, please try again.'],
+  google_unverified: ['Email Google của bạn chưa được xác minh.', 'Your Google email is not verified.'],
+  locked: ['Tài khoản đã bị khoá. Vui lòng liên hệ hotline 0763 161 286.', 'This account is locked. Please call +84 763 161 286.'],
 };
 
 // Nhãn đổi theo chế độ đăng nhập / đăng ký (VI, EN).
@@ -95,11 +95,11 @@ export function initAccount() {
     [name, email, password].forEach((input) => setErr(input, ''));
 
     let bad = null;
-    if (reg && !name.value.trim()) { setErr(name, 'Vui lòng nhập họ tên.'); bad = bad || name; }
-    if (!email.value.trim()) { setErr(email, 'Vui lòng nhập địa chỉ email.'); bad = bad || email; }
-    else if (!EMAIL_RE.test(email.value.trim())) { setErr(email, 'Địa chỉ email chưa đúng định dạng.'); bad = bad || email; }
-    if (!password.value) { setErr(password, 'Vui lòng nhập mật khẩu.'); bad = bad || password; }
-    else if (reg && password.value.length < 8) { setErr(password, 'Mật khẩu cần ít nhất 8 ký tự.'); bad = bad || password; }
+    if (reg && !name.value.trim()) { setErr(name, t('Vui lòng nhập họ tên.', 'Please enter your name.')); bad = bad || name; }
+    if (!email.value.trim()) { setErr(email, t('Vui lòng nhập địa chỉ email.', 'Please enter your email address.')); bad = bad || email; }
+    else if (!EMAIL_RE.test(email.value.trim())) { setErr(email, t('Địa chỉ email chưa đúng định dạng.', 'Invalid email address.')); bad = bad || email; }
+    if (!password.value) { setErr(password, t('Vui lòng nhập mật khẩu.', 'Please enter your password.')); bad = bad || password; }
+    else if (reg && password.value.length < 8) { setErr(password, t('Mật khẩu cần ít nhất 8 ký tự.', 'Password must be at least 8 characters.')); bad = bad || password; }
     if (bad) { bad.focus(); return; }
 
     busy(form, true);
@@ -143,8 +143,8 @@ export function initAccount() {
     // Tài khoản chỉ có Google: đặt mật khẩu lần đầu, không cần mật khẩu cũ
     root.querySelector('[data-current-password]').hidden = !user.has_password;
     root.querySelector('[data-password-summary]').textContent = user.has_password
-      ? 'Đổi mật khẩu'
-      : 'Đặt mật khẩu (để đăng nhập bằng email)';
+      ? t('Đổi mật khẩu', 'Change password')
+      : t('Đặt mật khẩu (để đăng nhập bằng email)', 'Set a password (to sign in with email)');
     closeEdit();
   }
 
@@ -180,13 +180,13 @@ export function initAccount() {
     e.preventDefault();
     const n = pForm.elements.name;
     setErr(n, ''); setErr(pForm.elements.phone, '');
-    if (!n.value.trim()) { setErr(n, 'Vui lòng nhập họ tên.'); n.focus(); return; }
+    if (!n.value.trim()) { setErr(n, t('Vui lòng nhập họ tên.', 'Please enter your name.')); n.focus(); return; }
     busy(pForm, true);
     try {
       const { user } = await api('/me', { method: 'PATCH', body: { name: n.value.trim(), phone: pForm.elements.phone.value.trim() } });
       showProfile(user);
       setUser(user);
-      setStatus(infoStatus, 'Đã lưu thông tin.', 'success');
+      setStatus(infoStatus, t('Đã lưu thông tin.', 'Details saved.'), 'success');
       root.querySelector('[data-edit-profile]').focus();
     } catch (err) {
       setStatus(pStatus, err.message);
@@ -210,8 +210,8 @@ export function initAccount() {
     const nw = pwForm.elements.new_password;
     setErr(cur, ''); setErr(nw, '');
     const needCur = !root.querySelector('[data-current-password]').hidden;
-    if (needCur && !cur.value) { setErr(cur, 'Vui lòng nhập mật khẩu hiện tại.'); cur.focus(); return; }
-    if (nw.value.length < 8) { setErr(nw, 'Mật khẩu cần ít nhất 8 ký tự.'); nw.focus(); return; }
+    if (needCur && !cur.value) { setErr(cur, t('Vui lòng nhập mật khẩu hiện tại.', 'Please enter your current password.')); cur.focus(); return; }
+    if (nw.value.length < 8) { setErr(nw, t('Mật khẩu cần ít nhất 8 ký tự.', 'Password must be at least 8 characters.')); nw.focus(); return; }
     busy(pwForm, true);
     try {
       await api('/me/password', { method: 'POST', body: { current_password: cur.value, new_password: nw.value } });
@@ -219,7 +219,7 @@ export function initAccount() {
       const { user } = await api('/me');
       if (user) showProfile(user);
       root.querySelector('.account-password').open = true;
-      setStatus(pwStatus, 'Đã cập nhật mật khẩu. Các thiết bị khác đã được đăng xuất.', 'success');
+      setStatus(pwStatus, t('Đã cập nhật mật khẩu. Các thiết bị khác đã được đăng xuất.', 'Password updated. Other devices have been signed out.'), 'success');
     } catch (err) {
       setStatus(pwStatus, err.message);
     } finally {
@@ -234,7 +234,7 @@ export function initAccount() {
   const params = new URLSearchParams(location.search);
   const errCode = params.get('error');
   if (errCode) {
-    setStatus(status, GOOGLE_ERRORS[errCode] || 'Không đăng nhập được, vui lòng thử lại.');
+    setStatus(status, GOOGLE_ERRORS[errCode] ? t(...GOOGLE_ERRORS[errCode]) : t('Không đăng nhập được, vui lòng thử lại.', 'Could not sign in, please try again.'));
     history.replaceState(null, '', location.pathname);
   }
   setMode(params.get('mode') === 'register' ? 'register' : 'login');

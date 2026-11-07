@@ -1,3 +1,5 @@
+import { currentLang, t } from './lang.js';
+import { TITLES_EN, catEn } from './projects-en.js';
 import { PROJECTS } from './projects-data.js';
 import { initReveal } from './reveal.js';
 import { lockScroll, unlockScroll } from './lock.js';
@@ -21,7 +23,7 @@ export function initProjects() {
     toggleBtn.addEventListener('click', () => {
       const isCollapsed = collapse.classList.toggle('is-collapsed');
       toggleBtn.setAttribute('aria-expanded', String(!isCollapsed));
-      toggleBtn.textContent = isCollapsed ? 'Xem thêm' : 'Thu gọn';
+      toggleBtn.textContent = isCollapsed ? t('Xem thêm', 'View more') : t('Thu gọn', 'Collapse');
       if (isCollapsed) {
         const sec = document.getElementById('du-an');
         if (sec && sec.getBoundingClientRect().top < -120) {
@@ -59,8 +61,8 @@ function initLightbox(items, list) {
     const on = isFavorite(projectIndex);
     favBtn.classList.toggle('is-on', on);
     favBtn.setAttribute('aria-pressed', String(on));
-    favBtn.setAttribute('aria-label', on ? 'Bỏ yêu thích dự án này' : 'Lưu dự án này vào thư viện yêu thích');
-    if (favLabel) favLabel.textContent = on ? 'Đã lưu vào thư viện yêu thích' : 'Lưu vào thư viện yêu thích';
+    favBtn.setAttribute('aria-label', on ? t('Bỏ yêu thích dự án này', 'Remove this project from favourites') : t('Lưu dự án này vào thư viện yêu thích', 'Save this project to favourites'));
+    if (favLabel) favLabel.textContent = on ? t('Đã lưu vào thư viện yêu thích', 'Saved to favourites') : t('Lưu vào thư viện yêu thích', 'Save to favourites library');
   };
 
   const fill = (i) => {
@@ -70,12 +72,14 @@ function initLightbox(items, list) {
     img.src = p.img;
     img.width = p.w;
     img.height = p.h;
-    img.alt = p.title;
-    cat.textContent = p.cat;
-    title.textContent = p.title;
-    note.textContent = p.note ? `Nguồn: ${p.note}` : '';
+    const en = currentLang() === 'en';
+    const name = en ? (TITLES_EN[projectIndex] || p.title) : p.title;
+    img.alt = name;
+    cat.textContent = en ? catEn(p.cat) : p.cat;
+    title.textContent = name;
+    note.textContent = p.note ? `${t('Nguồn', 'Source')}: ${p.note}` : '';
     link.hidden = !p.link;
-    if (p.link) { link.href = p.link; link.textContent = p.domain ? `Xem nguồn gốc (${p.domain})` : 'Xem nguồn gốc'; }
+    if (p.link) { link.href = p.link; link.textContent = p.domain ? `${t('Xem nguồn gốc', 'View source')} (${p.domain})` : t('Xem nguồn gốc', 'View source'); }
     pin.href = p.pin;
     count.textContent = `${index + 1} / ${items.length}`;
     paintFav();
