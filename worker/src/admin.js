@@ -84,6 +84,7 @@ export async function handleAdmin(request, env, parts) {
     if (admin.id === id) throw new HttpError(400, "Không tự xoá chính mình");
     await env.DB.batch([
       env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(id),
+      env.DB.prepare("DELETE FROM favorites WHERE user_id = ?").bind(id),
       env.DB.prepare("DELETE FROM users WHERE id = ?").bind(id),
     ]);
     return json({ ok: true });

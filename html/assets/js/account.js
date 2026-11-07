@@ -1,5 +1,8 @@
-// Trang /tai-khoan/: đăng nhập, đăng ký (email/mật khẩu hoặc Google) và hồ sơ người dùng.
+// Trang /tai-khoan/: đăng nhập, đăng ký (email/mật khẩu hoặc Google) và dashboard người dùng.
 // API ở Worker (worker/src/account.js), phiên lưu trong cookie HttpOnly.
+import { api, fetchUser, setUser } from './session.js';
+import { currentLang } from './lang.js';
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GOOGLE_ERRORS = {
@@ -11,17 +14,21 @@ const GOOGLE_ERRORS = {
   locked: 'Tài khoản đã bị khoá. Vui lòng liên hệ hotline 0763 161 286.',
 };
 
-async function api(path, { method = 'GET', body } = {}) {
-  const res = await fetch('/api' + path, {
-    method,
-    credentials: 'same-origin',
-    headers: body ? { 'content-type': 'application/json' } : {},
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Có lỗi xảy ra, vui lòng thử lại.');
-  return data;
-}
+// Nhãn đổi theo chế độ đăng nhập / đăng ký (VI, EN).
+const LABELS = {
+  login: {
+    title: ['Đăng nhập Casa⁺', 'Sign in to Casa⁺'],
+    submit: ['Đăng nhập', 'Sign in'],
+    switch: ['Đăng ký', 'Create account'],
+    google: ['Đăng nhập bằng Google', 'Sign in with Google'],
+  },
+  register: {
+    title: ['Tạo tài khoản Casa⁺', 'Create a Casa⁺ account'],
+    submit: ['Tạo tài khoản', 'Create account'],
+    switch: ['Đã có tài khoản', 'I have an account'],
+    google: ['Đăng ký bằng Google', 'Sign up with Google'],
+  },
+};
 
 function setErr(input, msg) {
   const err = document.getElementById(input.getAttribute('aria-describedby'));
@@ -36,9 +43,9 @@ function setStatus(el, msg, kind = 'notice') {
   el.textContent = msg || '';
 }
 
-function busy(form, on) {
-  form.querySelectorAll('button').forEach((b) => { b.disabled = on; });
-  form.setAttribute('aria-busy', on ? 'true' : 'false');
+function busy(scope, on) {
+  scope.querySelectorAll('button').forEach((b) => { b.disabled = on; });
+  scope.setAttribute('aria-busy', on ? 'true' : 'false');
 }
 
 export function initAccount() {
@@ -50,20 +57,27 @@ export function initAccount() {
   const form = root.querySelector('[data-account-form]');
   const status = form.querySelector('[data-account-status]');
   const { name, email, password } = form.elements;
+  let me = null;
 
   // ----- Đăng nhập / đăng ký -----
+
+  const paintMode = () => {
+    const L = LABELS[form.dataset.mode];
+    const i = currentLang() === 'en' ? 1 : 0;
+    root.querySelector('[data-auth-title]').textContent = L.title[i];
+    form.querySelector('[data-submit-label]').textContent = L.submit[i];
+    form.querySelector('[data-switch-mode]').textContent = L.switch[i];
+    root.querySelector('[data-google-label]').textContent = L.google[i];
+  };
 
   const setMode = (mode) => {
     form.dataset.mode = mode;
     const reg = mode === 'register';
     form.querySelectorAll('[data-only="register"]').forEach((el) => { el.hidden = !reg; });
-    form.querySelector('[data-submit-label]').textContent = reg ? 'Tạo Tài Khoản' : 'Đăng Nhập';
-    form.querySelector('[data-switch-mode]').textContent = reg ? 'Đã Có Tài Khoản' : 'Đăng Ký';
-    root.querySelector('[data-auth-title]').textContent = reg ? 'Tạo tài khoản Casa+' : 'Hi! Please enter your Account';
-    root.querySelector('[data-google-label]').textContent = reg ? 'Đăng ký bằng Google' : 'Đăng nhập bằng Google';
     password.autocomplete = reg ? 'new-password' : 'current-password';
-    [name, email, password].forEach((i) => setErr(i, ''));
+    [name, email, password].forEach((input) => setErr(input, ''));
     setStatus(status, '');
+    paintMode();
   };
 
   form.querySelector('[data-switch-mode]').addEventListener('click', () => {
@@ -78,7 +92,7 @@ export function initAccount() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const reg = form.dataset.mode === 'register';
-    [name, email, password].forEach((i) => setErr(i, ''));
+    [name, email, password].forEach((input) => setErr(input, ''));
 
     let bad = null;
     if (reg && !name.value.trim()) { setErr(name, 'Vui lòng nhập họ tên.'); bad = bad || name; }
@@ -95,6 +109,8 @@ export function initAccount() {
       const { user } = await api(reg ? '/auth/register' : '/auth/login', { method: 'POST', body });
       form.reset();
       showProfile(user);
+      setUser(user); // thư viện yêu thích chuyển sang theo tài khoản (và hỏi đồng bộ nếu cần)
+      window.scrollTo({ top: 0 });
     } catch (err) {
       setStatus(status, err.message);
     } finally {
@@ -102,35 +118,63 @@ export function initAccount() {
     }
   });
 
-  // ----- Hồ sơ -----
+  // ----- Dashboard -----
 
+  const infoView = root.querySelector('[data-info-view]');
+  const infoStatus = root.querySelector('[data-profile-status]');
   const pForm = root.querySelector('[data-profile-form]');
-  const pStatus = root.querySelector('[data-profile-status]');
+  const pStatus = root.querySelector('[data-profile-form-status]');
   const pwForm = root.querySelector('[data-password-form]');
   const pwStatus = root.querySelector('[data-password-status]');
 
+  const setText = (sel, value) => root.querySelectorAll(sel).forEach((el) => { el.textContent = value; });
+
   function showProfile(user) {
+    me = user;
     authView.hidden = true;
     profileView.hidden = false;
-    root.querySelector('[data-profile-title]').textContent = `Xin chào, ${user.name || user.email}`;
-    root.querySelector('[data-profile-email]').textContent =
-      user.email + (user.google_linked ? ' · đã liên kết Google' : '');
+    setText('[data-user-name]', user.name || user.email);
+    setText('[data-user-phone]', user.phone || '—');
+    setText('[data-user-email]', user.email);
+    root.querySelector('[data-user-google]').hidden = !user.google_linked;
     const avatar = root.querySelector('[data-profile-avatar]');
     avatar.hidden = !user.avatar_url;
     if (user.avatar_url) { avatar.referrerPolicy = 'no-referrer'; avatar.src = user.avatar_url; }
-    pForm.elements.name.value = user.name || '';
-    pForm.elements.phone.value = user.phone || '';
     // Tài khoản chỉ có Google: đặt mật khẩu lần đầu, không cần mật khẩu cũ
     root.querySelector('[data-current-password]').hidden = !user.has_password;
-    root.querySelector('[data-password-summary]').textContent = user.has_password ? 'Đổi mật khẩu' : 'Đặt mật khẩu (để đăng nhập bằng email)';
-    setStatus(pStatus, '');
+    root.querySelector('[data-password-summary]').textContent = user.has_password
+      ? 'Đổi mật khẩu'
+      : 'Đặt mật khẩu (để đăng nhập bằng email)';
+    closeEdit();
   }
 
   function showAuth() {
+    me = null;
     profileView.hidden = true;
     authView.hidden = false;
     setMode('login');
   }
+
+  function openEdit() {
+    pForm.elements.name.value = me?.name || '';
+    pForm.elements.phone.value = me?.phone || '';
+    setErr(pForm.elements.name, ''); setErr(pForm.elements.phone, '');
+    setStatus(pStatus, ''); setStatus(infoStatus, '');
+    infoView.hidden = true;
+    pForm.hidden = false;
+    pForm.elements.name.focus();
+  }
+
+  function closeEdit() {
+    pForm.hidden = true;
+    infoView.hidden = false;
+  }
+
+  root.querySelector('[data-edit-profile]').addEventListener('click', openEdit);
+  root.querySelector('[data-cancel-edit]').addEventListener('click', () => {
+    closeEdit();
+    root.querySelector('[data-edit-profile]').focus();
+  });
 
   pForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -141,7 +185,9 @@ export function initAccount() {
     try {
       const { user } = await api('/me', { method: 'PATCH', body: { name: n.value.trim(), phone: pForm.elements.phone.value.trim() } });
       showProfile(user);
-      setStatus(pStatus, 'Đã lưu thông tin.', 'success');
+      setUser(user);
+      setStatus(infoStatus, 'Đã lưu thông tin.', 'success');
+      root.querySelector('[data-edit-profile]').focus();
     } catch (err) {
       setStatus(pStatus, err.message);
     } finally {
@@ -150,10 +196,12 @@ export function initAccount() {
   });
 
   root.querySelector('[data-logout]').addEventListener('click', async () => {
-    busy(pForm, true);
+    busy(infoView, true);
     try { await api('/auth/logout', { method: 'POST' }); } catch { /* vẫn về màn đăng nhập */ }
-    busy(pForm, false);
+    busy(infoView, false);
+    setUser(null);
     showAuth();
+    window.scrollTo({ top: 0 });
   });
 
   pwForm.addEventListener('submit', async (e) => {
@@ -170,6 +218,7 @@ export function initAccount() {
       pwForm.reset();
       const { user } = await api('/me');
       if (user) showProfile(user);
+      root.querySelector('.account-password').open = true;
       setStatus(pwStatus, 'Đã cập nhật mật khẩu. Các thiết bị khác đã được đăng xuất.', 'success');
     } catch (err) {
       setStatus(pwStatus, err.message);
@@ -177,6 +226,8 @@ export function initAccount() {
       busy(pwForm, false);
     }
   });
+
+  document.addEventListener('casa:lang', paintMode);
 
   // ----- Khởi động -----
 
@@ -186,9 +237,11 @@ export function initAccount() {
     setStatus(status, GOOGLE_ERRORS[errCode] || 'Không đăng nhập được, vui lòng thử lại.');
     history.replaceState(null, '', location.pathname);
   }
-  if (params.get('mode') === 'register') setMode('register');
+  setMode(params.get('mode') === 'register' ? 'register' : 'login');
 
-  api('/me')
-    .then(({ user }) => { if (user) showProfile(user); })
-    .catch(() => { /* chưa có API (chạy tĩnh) — giữ màn đăng nhập */ });
+  // Dùng chung lần gọi /api/me với thư viện yêu thích (session.js). Lỗi mạng chỉ trả về
+  // bản nhớ tạm (không có has_password) — khi đó giữ màn đăng nhập.
+  fetchUser().then((user) => {
+    if (user && 'has_password' in user) showProfile(user);
+  });
 }

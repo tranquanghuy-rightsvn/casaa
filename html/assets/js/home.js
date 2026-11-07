@@ -34,24 +34,15 @@ function initHero() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   gsap.timeline({ delay: .15 })
     .to('.hero__title .line > span', { y: 0, duration: 1.2, ease: 'expo.out', stagger: .12 })
-    .to('.hero__lead', { opacity: 1, y: 0, duration: .9, ease: 'power3.out' }, '-=.75')
-    .to('.hero__cta', { opacity: 1, y: 0, duration: .9, ease: 'power3.out' }, '-=.7');
+    .to('.hero__lead', { opacity: 1, y: 0, duration: .9, ease: 'power3.out' }, '-=.75');
 }
 
 /* ---------------- Solutions: scene change, then words, then button ---------------- */
-function splitWords(slide) {
-  slide.querySelectorAll('.slide__title .line').forEach((line) => {
-    const words = line.textContent.trim().split(/\s+/);
-    line.innerHTML = words.map((w) => `<span class="w">${w}</span>`).join(' ');
-  });
-}
-
 function parts(slide) {
   return {
     el: slide,
     img: slide.querySelector('.slide__media img'),
     dim: slide.querySelector('.slide__dim'),
-    words: slide.querySelectorAll('.slide__title .w'),
     cta: slide.querySelector('.slide__cta'),
     eyebrow: slide.querySelector('.slide__eyebrow'),
     names: slide.querySelectorAll('.slide__name > span'),
@@ -62,7 +53,7 @@ function parts(slide) {
 
 // Every text element of a slide, for hiding / fading out.
 function textEls(p) {
-  return [p.eyebrow, ...p.names, p.tagline, ...p.feats, ...p.words, p.cta].filter(Boolean);
+  return [p.eyebrow, ...p.names, p.tagline, ...p.feats, p.cta].filter(Boolean);
 }
 
 // Product text settles in first, then the title word by word (line 1, then line 2),
@@ -73,9 +64,6 @@ function textIn(p) {
     .fromTo(p.names, { opacity: 0, y: 24, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: .7, ease: 'power4.out', stagger: .08 }, '-=.25')
     .fromTo(p.tagline, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .45, ease: 'power3.out' }, '-=.45')
     .fromTo(p.feats, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: .4, ease: 'power3.out', stagger: .05 }, '-=.3')
-    .fromTo(p.words,
-      { opacity: 0, y: '0.35em', filter: 'blur(8px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: .5, ease: 'power3.out', stagger: .065 }, '-=.25')
     .fromTo(p.cta,
       { opacity: 0, y: 16 },
       { opacity: 1, y: 0, duration: .5, ease: 'power3.out' }, '-=.25');
@@ -87,7 +75,6 @@ function initSolutions() {
   const slides = [...section.querySelectorAll('[data-slide]')];
   const navButtons = [...section.querySelectorAll('[data-slides-nav] button')];
   const counter = section.querySelector('[data-slide-current]');
-  slides.forEach(splitWords);
   const P = slides.map(parts);
   const n = slides.length;
 

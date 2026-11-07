@@ -7,11 +7,15 @@ Site HTML/CSS/JS tĩnh, không cần Node, không cần build. Chỉ cần đưa
 | Trang | File |
 |---|---|
 | Trang chủ | `index.html` |
-| Sơ đồ tiến trình | `tien-trinh/index.html` → `/tien-trinh/` (neo: `#cau-chuyen`, `#nghien-cuu`, `#thiet-ke`, `#san-xuat`, `#lap-dat`, `#phu-dieu`, `#op-tuong`, `#lam-hoa-gio`, `#do-decor`, `#ran-san-ho`) |
+| Giải pháp công nghệ in 3D | `giai-phap/index.html` → `/giai-phap/` (neo: `#cau-chuyen`, `#he-sinh-thai`, `#lam-che-nang`, `#gach-op-chuyen-mau`, `#gach-phu-dieu`, `#artwork-decor`, `#ran-san-ho`, `#nghien-cuu`, `#san-xuat`, `#ket-luan`) |
+| Sơ đồ tiến trình (tổng quan) | `tien-trinh/index.html` → `/tien-trinh/` |
+| Tiến trình — 5 trang con | `tien-trinh/{cau-chuyen,nghien-cuu,thiet-ke,san-xuat,lap-dat}/index.html` |
 | Casa xin chào | `gioi-thieu/index.html` → `/gioi-thieu/` |
 | Dịch vụ + form liên hệ | `dich-vu/index.html` → `/dich-vu/` |
 | Sản phẩm | `san-pham/index.html` → `/san-pham/` (neo: `#phu-dieu`, `#op-tuong`, `#lam-hoa-gio`, `#do-decor`, `#ran-san-ho`) |
-| Tài khoản (đăng nhập / đăng ký) | `tai-khoan/index.html` → `/tai-khoan/` |
+| Chi tiết sản phẩm — 5 trang | `san-pham/{lam-che-nang,gach-op-chuyen-mau,gach-phu-dieu,artwork-decor,ran-san-ho}/index.html` |
+| Thư viện yêu thích (dự án đã ghim) | `thu-vien-yeu-thich/index.html` → `/thu-vien-yeu-thich/` |
+| Tài khoản | `tai-khoan/index.html` → `/tai-khoan/` (đăng nhập email/Google; dashboard: thông tin, đổi mật khẩu, thư viện đã ghim) |
 
 ```
 assets/
@@ -25,6 +29,9 @@ index.html              các trang con nằm trong thư mục riêng
 - Mỗi trang là một file HTML đầy đủ: header, menu, tìm kiếm và footer được chép trực tiếp vào từng trang (không dùng partial, không có bước build).
 - Thư viện ngoài lấy qua CDN: GSAP + ScrollTrigger 3.15.0 (jsDelivr), font Google Fonts.
 - `assets/js/projects-data.js` giữ tiêu đề/nguồn của 34 dự án cho lightbox; danh sách 34 thẻ dự án đã nằm sẵn trong `index.html`.
+- Ghim dự án: `assets/js/favorites.js`. Chưa đăng nhập → lưu `localStorage` (`casa:favorites:v1`); đã đăng nhập → lưu theo tài khoản (API `/api/me/favorites`, bảng D1 `favorites`, migration `0002_favorites.sql`). Khi đăng nhập mà trình duyệt còn mục đã ghim, hiện hộp hỏi "Đồng bộ vào tài khoản" (đồng ý = gộp vào tài khoản và xoá bản trên trình duyệt; "Để sau" = không hỏi lại cho đến khi danh sách đổi). Trạng thái đăng nhập dùng chung ở `assets/js/session.js`.
+- Thêm trang mới: chạy `python3 scripts/site_chrome.py` (gắn Google Analytics + link pháp lý ở footer), thêm đường dẫn vào `PAGES` trong `scripts/seo.py` rồi chạy `python3 scripts/seo.py`.
+- Đổi ngôn ngữ VI/EN: `assets/js/lang.js` đọc `data-i18n` trên từng phần tử, lưu lựa chọn ở `localStorage` (`casa:lang`). Muốn dịch thêm, gắn `data-i18n="key"` và bổ sung key vào từ điển `EN` trong file này.
 - Ảnh/video gốc từ Drive và Figma nằm trong `drive/` (không đưa lên hosting).
 
 ## Chạy thử

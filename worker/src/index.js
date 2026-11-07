@@ -3,6 +3,7 @@
 import { json, HttpError, checkOrigin } from "./http.js";
 import { handleAccount } from "./account.js";
 import { handleAdmin } from "./admin.js";
+import { handleFavorites } from "./favorites.js";
 
 const CANONICAL_HOST = "3d-printedfacade.com";
 
@@ -12,6 +13,11 @@ async function route(request, env) {
   checkOrigin(request);
 
   if (parts[0] === "health" && request.method === "GET") return json({ ok: true });
+
+  if (parts[0] === "me" && parts[1] === "favorites") {
+    const res = await handleFavorites(request, env, parts);
+    if (res) return res;
+  }
 
   if (parts[0] === "auth" || parts[0] === "me") {
     const res = await handleAccount(request, env, parts);

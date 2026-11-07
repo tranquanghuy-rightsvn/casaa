@@ -15,14 +15,24 @@ export function initMenu(page) {
   let tl = null;
 
   // Mark the current page in the menu.
-  const current = { home: 'home', products: 'products', process: 'process', about: 'about', services: 'services', account: 'account' }[page];
+  const current = { home: 'home', products: 'products', product: 'products', process: 'process', 'process-step': 'process', about: 'about', services: 'services', account: 'account', detail: 'solutions', favorites: 'favorites' }[page];
   document.querySelectorAll('[data-nav]').forEach((a) => { if (a.dataset.nav === current) a.setAttribute('aria-current', 'page'); });
 
   const open = () => {
     if (isOpen) return;
     isOpen = true;
     tl?.kill();
+
+    // Show the menu first, force layout, then paint the "before" state — all
+    // in the same frame. A percentage transform on an element that has not
+    // been laid out yet resolves to 0px, which is exactly the one-frame flash
+    // at the final position we are trying to avoid.
     menu.hidden = false;
+    void menu.offsetHeight;
+    if (!reduceMotion()) {
+      gsap.set(links, { yPercent: 110 });
+      gsap.set(aside, { autoAlpha: 0, y: 16 });
+    }
     root.classList.add('menu-open');
     lockScroll();
     toggle.setAttribute('aria-expanded', 'true');

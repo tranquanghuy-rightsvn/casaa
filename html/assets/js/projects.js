@@ -1,6 +1,7 @@
 import { PROJECTS } from './projects-data.js';
 import { initReveal } from './reveal.js';
 import { lockScroll, unlockScroll } from './lock.js';
+import { isFavorite, toggleFavorite, onFavoritesChange } from './favorites.js';
 
 export function initProjects() {
   const list = document.querySelector('[data-projects]');
@@ -45,14 +46,27 @@ function initLightbox(items, list) {
   const link = dlg.querySelector('[data-lb-link]');
   const pin = dlg.querySelector('[data-lb-pin]');
   const count = dlg.querySelector('[data-lb-count]');
+  const favBtn = dlg.querySelector('[data-lb-fav]');
+  const favLabel = dlg.querySelector('[data-lb-fav-label]');
   const figure = dlg.querySelector('.lightbox__figure');
   const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   let index = 0;
+  let projectIndex = 0;
   let opener = null;
+
+  const paintFav = () => {
+    if (!favBtn) return;
+    const on = isFavorite(projectIndex);
+    favBtn.classList.toggle('is-on', on);
+    favBtn.setAttribute('aria-pressed', String(on));
+    favBtn.setAttribute('aria-label', on ? 'Bỏ yêu thích dự án này' : 'Lưu dự án này vào thư viện yêu thích');
+    if (favLabel) favLabel.textContent = on ? 'Đã lưu vào thư viện yêu thích' : 'Lưu vào thư viện yêu thích';
+  };
 
   const fill = (i) => {
     index = (i + items.length) % items.length;
     const p = items[index];
+    projectIndex = PROJECTS.indexOf(p);
     img.src = p.img;
     img.width = p.w;
     img.height = p.h;
@@ -64,6 +78,7 @@ function initLightbox(items, list) {
     if (p.link) { link.href = p.link; link.textContent = p.domain ? `Xem nguồn gốc (${p.domain})` : 'Xem nguồn gốc'; }
     pin.href = p.pin;
     count.textContent = `${index + 1} / ${items.length}`;
+    paintFav();
   };
 
   const show = (i, dir = 0) => {
@@ -98,6 +113,8 @@ function initLightbox(items, list) {
   dlg.querySelector('[data-lb-close]').addEventListener('click', close);
   dlg.querySelector('[data-lb-prev]').addEventListener('click', () => show(index - 1, -1));
   dlg.querySelector('[data-lb-next]').addEventListener('click', () => show(index + 1, 1));
+  favBtn?.addEventListener('click', () => { toggleFavorite(projectIndex); paintFav(); });
+  onFavoritesChange(paintFav);
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); }); // Esc
   dlg.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') { e.preventDefault(); show(index - 1, -1); }

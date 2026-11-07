@@ -74,6 +74,18 @@ PAGES = {
     "/dich-vu/": ("Dịch vụ", "WebPage", True, "0.9", "monthly"),
     "/tien-trinh/": ("Sơ đồ tiến trình", "WebPage", True, "0.7", "monthly"),
     "/gioi-thieu/": ("Casa xin chào", "AboutPage", True, "0.7", "monthly"),
+    "/giai-phap/": ("Giải pháp in 3D gốm", "WebPage", True, "0.8", "monthly"),
+    "/san-pham/lam-che-nang/": ("Lam che nắng", "WebPage", True, "0.8", "monthly"),
+    "/san-pham/gach-op-chuyen-mau/": ("Gạch ốp chuyển màu", "WebPage", True, "0.8", "monthly"),
+    "/san-pham/gach-phu-dieu/": ("Gạch phù điêu", "WebPage", True, "0.8", "monthly"),
+    "/san-pham/artwork-decor/": ("Artwork & decor", "WebPage", True, "0.8", "monthly"),
+    "/san-pham/ran-san-ho/": ("Rạn san hô", "WebPage", True, "0.8", "monthly"),
+    "/tien-trinh/cau-chuyen/": ("Câu chuyện", "WebPage", True, "0.6", "monthly"),
+    "/tien-trinh/nghien-cuu/": ("Nghiên cứu", "WebPage", True, "0.6", "monthly"),
+    "/tien-trinh/thiet-ke/": ("Thiết kế", "WebPage", True, "0.6", "monthly"),
+    "/tien-trinh/san-xuat/": ("Sản xuất", "WebPage", True, "0.6", "monthly"),
+    "/tien-trinh/lap-dat/": ("Lắp đặt", "WebPage", True, "0.6", "monthly"),
+    "/thu-vien-yeu-thich/": ("Thư viện yêu thích", "CollectionPage", False, None, None),
     "/tai-khoan/": ("Tài khoản", "WebPage", False, None, None),
     "/chinh-sach-bao-mat/": ("Chính sách bảo mật", "WebPage", True, "0.3", "yearly"),
     "/dieu-khoan/": ("Điều khoản sử dụng", "WebPage", True, "0.3", "yearly"),
@@ -86,6 +98,17 @@ def file_for(path):
 
 def esc(s):
     return s.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+
+
+def crumbs(path):
+    """Trang chủ > các trang cha có trong PAGES > trang hiện tại."""
+    out = [("Trang chủ", "/")]
+    segs = path.strip("/").split("/")
+    for i in range(1, len(segs) + 1):
+        p = "/" + "/".join(segs[:i]) + "/"
+        if p in PAGES:
+            out.append((PAGES[p][0], p))
+    return out
 
 
 def graph_for(path, title, desc):
@@ -103,8 +126,8 @@ def graph_for(path, title, desc):
         graph.append({
             "@type": "BreadcrumbList", "@id": f"{url}#breadcrumb",
             "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "Trang chủ", "item": f"{SITE}/"},
-                {"@type": "ListItem", "position": 2, "name": name, "item": url},
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + p}
+                for i, (n, p) in enumerate(crumbs(path))
             ],
         })
     if path == "/san-pham/":

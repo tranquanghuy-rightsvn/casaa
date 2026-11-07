@@ -2,12 +2,12 @@ import { lockScroll, unlockScroll, trapFocus } from './lock.js';
 
 // Small built-in index of the site's pages and sections.
 const INDEX = [
-  { title: 'Giải pháp công nghệ in 3D chế tác gốm thực tế', desc: 'Gạch ốp tường, gạch lát sàn, lam hoa gió, gốm sứ, tranh phù điêu', url: '/#giai-phap' },
-  { title: 'Gạch nung ốp tường', desc: 'Giải pháp in 3D gốm', url: '/#giai-phap' },
-  { title: 'Gạch lát sàn đất nung thủ công', desc: 'Giải pháp in 3D gốm', url: '/#giai-phap' },
-  { title: 'Lam hoa gió', desc: 'Giải pháp in 3D gốm', url: '/#giai-phap' },
-  { title: 'Tranh phù điêu gốm', desc: 'Giải pháp in 3D gốm', url: '/#giai-phap' },
-  { title: 'Rạn san hô', desc: 'Giải pháp in 3D gốm', url: '/#giai-phap' },
+  { title: 'Giải pháp công nghệ in 3D chế tác gốm thực tế', desc: 'Lam che nắng, gạch ốp chuyển màu, gạch phù điêu, artwork, rạn san hô', url: '/giai-phap/' },
+  { title: 'Lam che nắng gốm 3D', desc: 'Giải nhiệt mặt tiền bằng cấu trúc biết thở', url: '/san-pham/lam-che-nang/' },
+  { title: 'Gạch ốp chuyển màu', desc: 'Vũ điệu men chảy 1200°C', url: '/san-pham/gach-op-chuyen-mau/' },
+  { title: 'Gạch phù điêu in 3D', desc: 'Kiến tạo chiều sâu bóng đổ', url: '/san-pham/gach-phu-dieu/' },
+  { title: 'Artwork & đồ decor gốm', desc: 'Điêu khắc nội thất, cảnh quan', url: '/san-pham/artwork-decor/' },
+  { title: 'Rạn san hô in 3D', desc: 'Giá thể đất nung xốp', url: '/san-pham/ran-san-ho/' },
   { title: 'Sản phẩm', desc: 'Phù điêu, ốp tường, lam hoa gió, đồ decor, rạn san hô', url: '/san-pham/' },
   { title: 'Phù điêu', desc: 'Nghệ thuật từ đất và lửa', url: '/san-pham/#phu-dieu' },
   { title: 'Ốp tường', desc: 'Vẻ đẹp truyền thống trong không gian hiện đại', url: '/san-pham/#op-tuong' },
