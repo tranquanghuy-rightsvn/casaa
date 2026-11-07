@@ -31,8 +31,9 @@ kynghenguyenminh (nguyenminhltd.vn).
    client giữ ở localStorage. Dọn token hết hạn mỗi lần verifyOtp; Đăng xuất thu hồi token
    trên server rồi mới reload.
 2. Chỉ email có trong sheet `Admins` (hoặc chủ script) mới được gửi OTP.
-3. Chủ script (`Session.getEffectiveUser()`) luôn là `root`, không nằm trong sheet, không hiện
-   là dòng sửa được trong UI.
+3. Chủ script (`Session.getEffectiveUser()`, hiện là web100.vn@gmail.com) là **root đặc biệt**:
+   luôn có toàn quyền, không nằm trong sheet, **không hiện trong danh sách Quản trị viên** (lỡ ghi
+   vào sheet cũng bị lọc), không ai thêm/sửa/xoá được.
 4. OTP sống 10 phút, cooldown 60 giây/email, sai 5 lần phải xin mã mới.
 5. Server tự `requireRole_` ở MỌI hàm — ẩn tab trên UI không phải bảo mật.
 
