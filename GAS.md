@@ -69,13 +69,17 @@ kynghenguyenminh (nguyenminhltd.vn).
 - Bản EN khởi tạo 1 lần bằng `scripts/build_en.py` (từ điển `scripts/i18n/dict.json` +
   `extra.json`). Từ đó **file EN là nguồn chân lý**, sửa qua CMS; KHÔNG chạy lại build_en (có
   `--force` mới ghi đè). Trang mới: `python3 scripts/build_en.py --only <slug>`.
-- Hai bản dùng CHUNG số mốc `data-cms-*` (EN sinh từ VI), nhưng nội dung sửa độc lập.
+- Hai bản dùng CHUNG số mốc `data-cms-*` (EN sinh từ VI). **Chữ sửa riêng** từng ngôn ngữ.
+  **Ảnh mặc định ĐỒNG BỘ** (chốt 07/11/2026): đổi ảnh trong nội dung (`saveContent`) hoặc banner
+  đầu trang (`savePageMeta`) ở bản nào thì bản kia nhận cùng file ảnh, trong cùng 1 commit; bản
+  kia thiếu mốc thì bỏ qua. Ô "Chỉ đổi ảnh ở bản này" / "Chỉ bản này" (`imagesThisLangOnly`,
+  `bannerThisLangOnly`) để tắt — khi đó ảnh bản EN có hậu tố `-en`.
 - SEO: canonical riêng, `hreflang` vi/en/x-default, `og:locale`, sitemap có cả 2 bản (`seo.py`).
 
 ## III. Giao diện website (soạn trực quan)
 
 - Nút **🇻🇳 Tiếng Việt | 🇬🇧 English** chọn bản đang sửa (iframe nạp URL VI hoặc URL EN theo `EN_PATHS_`).
-  Ảnh mới của bản EN đặt tên `<slug>-en-<key>-<ts>`. Đổi ngôn ngữ khi còn thay đổi chưa lưu → hỏi.
+  Đổi ngôn ngữ khi còn thay đổi chưa lưu → hỏi.
 
 - Tab con theo nhóm trang: Trang chủ · Giải pháp · Sản phẩm (+5 trang chi tiết) · Tiến trình (+5
   trang con) · Dịch vụ · Giới thiệu · Thư viện yêu thích · Tài khoản · Pháp lý (2) · Trang 404.
