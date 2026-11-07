@@ -207,7 +207,7 @@ def main():
         encoding="utf-8",
     )
     (HTML / "robots.txt").write_text(
-        "User-agent: *\nAllow: /\nDisallow: /api/\n\n"
+        "User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin/\n\n"
         f"Sitemap: {SITE}/sitemap.xml\n",
         encoding="utf-8",
     )

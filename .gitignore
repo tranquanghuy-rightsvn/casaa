@@ -6,3 +6,7 @@
 node_modules/
 .wrangler/
 .dev.vars
+
+# CMS Google Apps Script (đẩy bằng clasp, không track git)
+gas/
+.clasp.json

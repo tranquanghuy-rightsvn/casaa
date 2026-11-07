@@ -3,6 +3,10 @@
 (giữ header, menu, tìm kiếm, footer). Sửa nội dung ở đây rồi chạy lại:
 
     python3 scripts/legal_pages.py && python3 scripts/seo.py
+
+⚠️ Từ khi có CMS (GAS.md): nội dung 2 trang pháp lý + 404 có thể đã được sửa qua CMS trên
+GitHub. Chạy lại script này sẽ GHI ĐÈ các sửa đổi đó — chỉ chạy khi chủ ý dựng lại từ đầu, rồi
+chạy tiếp `python3 scripts/cms_tag.py`.
 """
 import re
 from pathlib import Path

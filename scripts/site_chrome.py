@@ -26,7 +26,7 @@ LEGAL = """      <nav class="site-footer__legal" aria-label="Pháp lý">
 
 def main():
     for f in sorted(HTML.rglob("*.html")):
-        if "drive" in f.relative_to(HTML).parts:
+        if {"drive", "admin"} & set(f.relative_to(HTML).parts):
             continue
         s = f.read_text(encoding="utf-8")
         before = s

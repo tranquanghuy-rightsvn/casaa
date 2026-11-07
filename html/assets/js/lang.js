@@ -56,6 +56,8 @@ const EN = {
 };
 
 function readLang() {
+  // CMS soạn trên bản tiếng Việt gốc trong HTML.
+  if (document.documentElement.classList.contains('cms-mode')) return 'vi';
   try {
     return localStorage.getItem(STORAGE) === 'en' ? 'en' : 'vi';
   } catch {

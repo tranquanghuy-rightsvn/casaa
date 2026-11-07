@@ -10,6 +10,9 @@ gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 const page = document.body.dataset.page;
+// Soạn trực quan trong CMS: trang nằm trong iframe của CMS và có ?cms=1 (xem cms-edit.js).
+const cmsMode = window.self !== window.top && new URLSearchParams(location.search).get('cms') === '1';
+if (cmsMode) document.documentElement.classList.add('cms-mode');
 
 initHeader();
 initMenu(page);
@@ -62,6 +65,8 @@ if (page === 'favorites') {
   initPinFavorites();
 }
 if (page === 'detail') import('./detail-page.js').then((m) => m.initDetailPage());
+
+if (cmsMode) import('./cms-edit.js').then((m) => m.initCmsEdit());
 
 // Images that load late can change page height; keep pinned sections measured correctly.
 window.addEventListener('load', () => ScrollTrigger.refresh());
