@@ -110,6 +110,10 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 
 ## VI. UX chung
 
+- Bố cục theo CMS adzo: sidebar tối cố định bên trái (logo + email + vai trò, các mục
+  Giao diện website · Quản lý chung · Người dùng · Quản trị viên, cuối là Xem website · Đăng
+  xuất); mục không thuộc quyền bị ẩn. Màn hình < 760px: sidebar chuyển lên trên.
+
 - Modal xác nhận (Huỷ/Đồng ý) và modal thông báo (Đóng) riêng, không alert()/confirm() native.
 - Mọi nút async: disable + spinner, tự phục hồi khi lỗi.
 - Sau lưu: thông báo kèm "Cần khoảng 1 phút để website cập nhật".
