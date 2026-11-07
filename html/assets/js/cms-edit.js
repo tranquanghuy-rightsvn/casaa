@@ -35,15 +35,34 @@ function insertPlain(text) {
   document.execCommand('insertText', false, text);
 }
 
+// HTML "sạch" của mốc data-cms-h: bỏ những gì JS của trang tự gắn lúc chạy (GSAP style,
+// data-vi của lang.js, class cms-*) — không để chúng lọt vào file khi lưu.
+function cleanHtml(el) {
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('*').forEach((n) => {
+    ['style', 'data-vi', 'contenteditable', 'spellcheck'].forEach((a) => n.removeAttribute(a));
+    [...n.classList].filter((c) => c.startsWith('cms-')).forEach((c) => n.classList.remove(c));
+    if (n.hasAttribute('class') && !n.getAttribute('class').trim()) n.removeAttribute('class');
+  });
+  return clone.innerHTML;
+}
+
+// Dấu vân tay nội dung người dùng có thể đổi: chữ + số lần xuống dòng (Shift+Enter).
+// Không so innerHTML thô vì JS của trang (GSAP, lang.js, bộ đếm) tự đổi nó.
+function fingerprint(el) {
+  return el.textContent.replace(/\s+/g, ' ').trim() + '|' + el.querySelectorAll('br').length;
+}
+
 function markText(el, mode, key) {
-  const read = () => (mode === 't' ? el.textContent : el.innerHTML);
-  const original = read();
-  let dirty = false;
+  const original = fingerprint(el);
+  let dirty = false;   // đang nằm trong danh sách chờ lưu
+  let typed = false;   // có gõ/dán/xoá thật trong lần sửa này
   el.classList.add('cms-editable');
   el.setAttribute('contenteditable', 'true');
   el.spellcheck = false;
 
-  el.addEventListener('focus', () => el.classList.add('cms-editing'));
+  el.addEventListener('focus', () => { typed = false; el.classList.add('cms-editing'); });
+  el.addEventListener('input', () => { typed = true; });
   el.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
@@ -57,15 +76,17 @@ function markText(el, mode, key) {
   el.addEventListener('drop', (e) => e.preventDefault());
   el.addEventListener('blur', () => {
     el.classList.remove('cms-editing');
-    const value = read();
-    // Chỉ tính thay đổi khi khác bản gốc; sửa rồi trả lại y như cũ thì bỏ khỏi danh sách chờ.
-    if (value === original) {
+    // Chỉ bấm vào rồi bấm ra (không gõ gì) -> không phải thay đổi.
+    if (!typed) return;
+    typed = false;
+    // Sửa rồi trả lại y như cũ -> bỏ khỏi danh sách chờ.
+    if (fingerprint(el) === original) {
       if (dirty) { dirty = false; el.classList.remove('cms-dirty'); post({ type: 'text-clear', key }); }
       return;
     }
     dirty = true;
     el.classList.add('cms-dirty');
-    post({ type: 'text', key, mode, value });
+    post({ type: 'text', key, mode, value: mode === 't' ? el.textContent : cleanHtml(el) });
   });
 }
 

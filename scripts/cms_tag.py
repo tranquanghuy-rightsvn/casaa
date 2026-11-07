@@ -79,7 +79,7 @@ TEXTABLE = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "dt", "dd", "figcapti
             "a", "span", "strong", "em", "b", "small", "label", "summary", "cite", "q", "time", "div"}
 SKIP_TAGS = {"script", "style", "svg", "form", "button", "select", "textarea", "template", "noscript",
              "dialog", "canvas", "video", "picture", "iframe"}
-SKIP_CLASS = re.compile(r"\b(masonry|pin|pin-wrap|visually-hidden|fav-[\w-]+|lightbox[\w-]*|search[\w-]*)\b")
+SKIP_CLASS = re.compile(r"\b(masonry|pin|pin-wrap|visually-hidden|fav-[\w-]+|lightbox[\w-]*|search[\w-]*|forge__pct)\b")  # forge__pct: JS tự đổi số %
 SKIP_ATTR = ("data-fav-grid", "data-fav-empty", "data-fav-preview", "data-account-root", "data-lightbox",
              "data-lb-", "data-search", "data-cms-g", "data-year", "data-slide-current", "hidden")
 KEY_ATTRS = ("data-cms-t", "data-cms-h", "data-cms-img")
