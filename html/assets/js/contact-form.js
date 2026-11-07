@@ -47,7 +47,7 @@ export function initContactForm() {
     e.preventDefault();
     status.className = 'contact-form__status';
     status.textContent = '';
-    const inputs = [...form.querySelectorAll('input[name]:not([type="radio"])')];
+    const inputs = [...form.querySelectorAll('input[name]:not([type="radio"]):not([name="website"])')];
     const results = inputs.map(check);
     if (results.includes(false)) {
       inputs[results.indexOf(false)].focus();
@@ -62,18 +62,27 @@ export function initContactForm() {
       submit.disabled = true;
       submit.textContent = 'Đang gửi…';
       try {
+        // Endpoint là web app Google Apps Script (CMS): gửi text/plain để không phát sinh
+        // CORS preflight (GAS không trả lời OPTIONS); GAS vẫn đọc được JSON trong thân.
         const res = await fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ ...data, nhu_cau: kind }),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ ...data, nhu_cau: kind, trang: location.pathname }),
         });
-        if (!res.ok) throw new Error(String(res.status));
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || !out.ok) {
+          const err = new Error(out.error || String(res.status));
+          err.server = Boolean(out.error);
+          throw err;
+        }
         form.reset();
         status.classList.add('is-ok');
         status.textContent = 'Đã gửi thông tin. Casa+ sẽ gọi lại cho bạn trong giờ làm việc.';
-      } catch {
+      } catch (err) {
         status.classList.add('is-error');
-        status.textContent = 'Chưa gửi được thông tin. Kiểm tra kết nối mạng rồi thử lại, hoặc gọi 0763 161 286.';
+        status.textContent = err.server
+          ? err.message
+          : 'Chưa gửi được thông tin. Kiểm tra kết nối mạng rồi thử lại, hoặc gọi 0763 161 286.';
       } finally {
         submit.disabled = false;
         submit.textContent = 'Gửi thông tin';
