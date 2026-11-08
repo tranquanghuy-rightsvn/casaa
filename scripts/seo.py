@@ -4,6 +4,7 @@ sitemap.xml và robots.txt. Chạy lại an toàn: khối giữa 2 dấu <!-- se
 
     python3 scripts/seo.py
 """
+import html
 import json
 import re
 from datetime import date
@@ -116,6 +117,23 @@ def load_routes():
 
 
 EN_ROUTES = load_routes()
+
+
+def _page_name(f):
+    """Tên ngắn của trang = phần trước " | " trong <title>."""
+    m = re.search(r"<title>(.*?)</title>", f.read_text(encoding="utf-8"), re.S)
+    return html.unescape(m.group(1)).split(" | ")[0].strip() if m else ""
+
+
+# Sản phẩm thêm qua CMS (mục Sản phẩm) có trong routes.js nhưng không có trong PAGES -> tự thêm
+for _vi, _en in EN_ROUTES.items():
+    if re.fullmatch(r"/san-pham/[a-z0-9-]+/", _vi) and _vi not in PAGES:
+        _f = HTML / _vi.strip("/") / "index.html"
+        if _f.exists():
+            PAGES[_vi] = (_page_name(_f), "WebPage", True, "0.8", "monthly")
+            _fe = HTML / _en.strip("/") / "index.html"
+            if _fe.exists():
+                NAMES_EN[_vi] = _page_name(_fe)
 
 
 def file_for(path, lang="vi"):

@@ -44,6 +44,7 @@ kynghenguyenminh (nguyenminhltd.vn).
 | Quyền | root | admin | editor |
 |---|---|---|---|
 | Giao diện website (soạn trực quan từng trang) | ✅ | — | — |
+| Sản phẩm (thêm / xoá / sắp xếp) | ✅ | — | — |
 | Quản lý chung (logo, liên hệ, mạng xã hội, banner, video hero, tiêu đề/H1/banner từng trang) | ✅ | — | — |
 | Người dùng website — xem danh sách | ✅ | ✅ | ✅ |
 | Người dùng website — sửa tên/SĐT/ghi chú, khoá/mở, đăng xuất mọi thiết bị, xoá | ✅ | ✅ | — |
@@ -76,14 +77,38 @@ kynghenguyenminh (nguyenminhltd.vn).
   `bannerThisLangOnly`) để tắt — khi đó ảnh bản EN có hậu tố `-en`.
 - SEO: canonical riêng, `hreflang` vi/en/x-default, `og:locale`, sitemap có cả 2 bản (`seo.py`).
 
+## III-b. Sản phẩm (chốt 08/11/2026)
+
+- Sản phẩm = 1 thẻ `<article class="slide">` trên `/san-pham/` + `/en/products/` (cùng số mốc
+  `data-cms-*`) + 1 trang chi tiết `/san-pham/<slug>/` ↔ `/en/products/<slug-en>/` (routes.js).
+  Thứ tự thẻ trên `/san-pham/` = thứ tự sản phẩm. Không có Sheet/JSON riêng — HTML là nguồn chân lý.
+- Danh sách trang của CMS (`pages_()`) và bảng VI→EN (`enPaths_()`) đọc từ GitHub (routes.js +
+  `/san-pham/`), cache 6 giờ (`catalog_v1`), làm mới mỗi lần mở mục Sản phẩm / thêm / xoá / sắp
+  xếp. `PAGES` / `EN_PATHS_` trong Code.js chỉ là bản dự phòng khi GitHub lỗi.
+- **Thêm** (`addProduct`, 1 commit): tên / tên phụ / nhãn nhóm / câu mô tả / tiêu đề + mô tả SEO
+  (VI + EN), đường dẫn VI + EN (chữ thường không dấu, không trùng trang/route nào), tối đa 4 đặc
+  điểm (biểu tượng lấy từ `<symbol id="i-*">` của trang Sản phẩm), ảnh sản phẩm (bắt buộc), banner
+  (tuỳ chọn, mặc định banner của trang mẫu), số phần nội dung 1–8 (mỗi phần có/không ảnh), vị trí.
+  Sinh: 2 trang chi tiết (khung head/header/footer chép từ trang chi tiết của sản phẩm đầu tiên,
+  `<main>` mới với chữ mẫu, đổi canonical/hreflang/og/JSON-LD), thẻ ở 2 trang Sản phẩm (đánh số
+  lại nhãn + nút điều hướng), dòng routes.js, 2 khối sitemap, 1 dòng `search.js`. Ảnh:
+  `assets/img/cms/<slug>-card|banner-<ts>.<ext>`. Nội dung chi tiết sửa sau ở Giao diện website.
+- **Xoá** (`deleteProduct`): bỏ 2 thẻ, xoá 2 file trang chi tiết, bỏ khỏi routes.js / sitemap /
+  search.js; link `href` tới trang đã xoá ở mọi trang khác đổi về `/san-pham/` (`/en/products/`) và
+  báo tên các trang đó để xem lại. Không xoá ảnh. Không xoá được sản phẩm cuối cùng.
+- **Sắp xếp** (`reorderProducts`): ↑/↓ rồi "Lưu thứ tự mới" — đổi thứ tự thẻ cả 2 bản, 1 commit.
+- Thẻ/khối trên Trang chủ và Giải pháp (slider, thẻ nổi bật) KHÔNG tự thêm theo sản phẩm mới.
+- `scripts/seo.py` tự nhận trang `/san-pham/<slug>/` có trong routes.js mà không có trong bảng
+  `PAGES` của nó (tên lấy từ `<title>`), nên chạy lại không làm rơi sản phẩm thêm qua CMS.
+
 ## III. Giao diện website (soạn trực quan)
 
 - Nút **🇻🇳 Tiếng Việt | 🇬🇧 English** chọn bản đang sửa (iframe nạp URL VI hoặc URL EN theo `EN_PATHS_`).
   Đổi ngôn ngữ khi còn thay đổi chưa lưu → hỏi.
 
-- Tab con theo nhóm trang: Trang chủ · Giải pháp · Sản phẩm (+5 trang chi tiết) · Tiến trình (+5
+- Tab con theo nhóm trang: Trang chủ · Giải pháp · Sản phẩm (+ trang chi tiết từng sản phẩm, theo III-b) · Tiến trình (+5
   trang con) · Dịch vụ · Giới thiệu · Thư viện yêu thích · Tài khoản · Pháp lý (2) · Trang 404.
-  Danh sách nằm ở `PAGES` trong `gas/Code.js`.
+  Danh sách: `pages_()` trong `gas/Code.js` (trang cố định ở `PAGES` + sản phẩm động).
 - Iframe nạp trang thật `SITE_BASE_URL + url + ?cms=1`. `html/assets/js/main.js` thấy `?cms=1`
   + đang trong iframe → nạp `cms-edit.js`, ép tiếng Việt, hiện hết khối `data-reveal`, chặn
   link/submit.
@@ -153,7 +178,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 ## VI. UX chung
 
 - Bố cục theo CMS adzo: sidebar tối cố định bên trái (logo + email + vai trò, các mục
-  Giao diện website · Quản lý chung · Người dùng · Quản trị viên, cuối là Xem website · Đăng
+  Giao diện website · Sản phẩm · Quản lý chung · Liên hệ · Người dùng · Quản trị viên, cuối là Xem website · Đăng
   xuất); mục không thuộc quyền bị ẩn. Màn hình < 760px: sidebar chuyển lên trên.
 
 - Modal xác nhận (Huỷ/Đồng ý) và modal thông báo (Đóng) riêng, không alert()/confirm() native.
@@ -166,7 +191,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 - Spreadsheet `Casa+ — CMS Data` (tự tạo lần đầu, id ở `SPREADSHEET_ID`):
   - sheet `Admins`: cột `email | role | added_by | added_at`, role ∈ `root|admin|editor`.
   - sheet `Leads`: cột `id | timestamp | nhu_cau | ho_ten | so_dien_thoai | email | trang | da_xu_ly | ghi_chu | xu_ly_boi`.
-- GitHub: `html/**/*.html`, `html/assets/img/cms/*`, `html/assets/img/og-cover.jpg`,
+- GitHub: `html/**/*.html`, `html/assets/js/routes.js`, `html/assets/js/search.js`, `html/sitemap.xml`, `html/assets/img/cms/*`, `html/assets/img/og-cover.jpg`,
   `html/assets/hero/{d,m}/*.webp`.
 
 ## VIII. Script Properties (tên CỐ ĐỊNH)
