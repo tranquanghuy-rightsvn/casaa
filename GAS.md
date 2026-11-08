@@ -45,6 +45,7 @@ kynghenguyenminh (nguyenminhltd.vn).
 |---|---|---|---|
 | Giao diện website (soạn trực quan từng trang) | ✅ | — | — |
 | Sản phẩm (thêm / xoá / sắp xếp) | ✅ | — | — |
+| Dự án tiêu biểu (thêm / sửa / xoá / sắp xếp) | ✅ | — | — |
 | Quản lý chung (logo, liên hệ, mạng xã hội, banner, video hero, tiêu đề/H1/banner từng trang) | ✅ | — | — |
 | Người dùng website — xem danh sách | ✅ | ✅ | ✅ |
 | Người dùng website — sửa tên/SĐT/ghi chú, khoá/mở, đăng xuất mọi thiết bị, xoá | ✅ | ✅ | — |
@@ -100,6 +101,28 @@ kynghenguyenminh (nguyenminhltd.vn).
 - Thẻ/khối trên Trang chủ và Giải pháp (slider, thẻ nổi bật) KHÔNG tự thêm theo sản phẩm mới.
 - `scripts/seo.py` tự nhận trang `/san-pham/<slug>/` có trong routes.js mà không có trong bảng
   `PAGES` của nó (tên lấy từ `<title>`), nên chạy lại không làm rơi sản phẩm thêm qua CMS.
+
+## III-c. Dự án tiêu biểu (chốt 08/11/2026)
+
+- **Website là trang TĨNH: dữ liệu dự án nằm hết trong HTML, JS không vẽ dữ liệu.** Không còn
+  `projects-data.js` / `projects-en.js`. Mỗi dự án = 1 `<button class="pin" data-index="N">` trong
+  `#projects-masonry` của `html/index.html` + `html/en/index.html`: ảnh (`<img alt>` = tên), `.pin__info`
+  (tên + danh mục · tên miền), thuộc tính `data-cat`, `data-note`, `data-link`, `data-domain`,
+  `data-pinterest`, `data-s-name|phone|email|address|website` (nhà cung cấp; bỏ trống = không có thuộc
+  tính). Lightbox chỉ đọc các thuộc tính đó; khung Nhà cung cấp tự ẩn khi trống.
+- Thư viện yêu thích (`/thu-vien-yeu-thich/`, `/en/favourites/`) và thẻ "Thư viện yêu thích" ở trang tài
+  khoản (`/tai-khoan/`, `/en/account/`) có sẵn bản HTML của MỌI dự án (`<li data-fav-item="N" hidden>`);
+  JS chỉ bỏ `hidden` + xếp theo thứ tự đã ghim (danh sách ghim là dữ liệu riêng từng khách nên bắt buộc ở
+  trình duyệt / D1).
+- `N` = mã CỐ ĐỊNH (lượt ghim của khách lưu theo N, ở localStorage + D1 `favorites`). Sắp xếp/sửa không
+  đổi mã; xoá thì không dùng lại mã — số kế tiếp ở `data-next-id` của `#projects-masonry`. Lượt ghim
+  của dự án đã xoá vẫn nằm trong D1 nhưng không hiện (không có thẻ HTML).
+- CMS mục **Dự án** (`listProjects`, `saveProject`, `reorderProjects`, `deleteProject`), 1 commit / lần,
+  ghi lại cả 6 vùng (3 trang × VI/EN). Trường: tên + danh mục (bắt buộc) + nguồn/ghi chú, riêng VI/EN;
+  link nguồn gốc (tên miền tự lấy từ link), link Pinterest, nhà cung cấp — dùng chung. Ảnh bắt buộc khi
+  thêm, thu về rộng ≤ 900px webp, lưu `html/assets/projects/cms-<N>-<ts>.<ext>`; xoá không xoá ảnh.
+  Thêm mặc định vào đầu danh sách (chọn được vị trí). Không xoá được dự án cuối cùng.
+- `scripts/build_en.py --force` giữ nguyên 3 vùng dự án của bản EN đang có (CMS là nguồn chân lý).
 
 ## III. Giao diện website (soạn trực quan)
 
@@ -178,7 +201,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 ## VI. UX chung
 
 - Bố cục theo CMS adzo: sidebar tối cố định bên trái (logo + email + vai trò, các mục
-  Giao diện website · Sản phẩm · Quản lý chung · Liên hệ · Người dùng · Quản trị viên, cuối là Xem website · Đăng
+  Giao diện website · Sản phẩm · Dự án · Quản lý chung · Liên hệ · Người dùng · Quản trị viên, cuối là Xem website · Đăng
   xuất); mục không thuộc quyền bị ẩn. Màn hình < 760px: sidebar chuyển lên trên.
 
 - Modal xác nhận (Huỷ/Đồng ý) và modal thông báo (Đóng) riêng, không alert()/confirm() native.
@@ -191,7 +214,7 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
 - Spreadsheet `Casa+ — CMS Data` (tự tạo lần đầu, id ở `SPREADSHEET_ID`):
   - sheet `Admins`: cột `email | role | added_by | added_at`, role ∈ `root|admin|editor`.
   - sheet `Leads`: cột `id | timestamp | nhu_cau | ho_ten | so_dien_thoai | email | trang | da_xu_ly | ghi_chu | xu_ly_boi`.
-- GitHub: `html/**/*.html`, `html/assets/js/routes.js`, `html/assets/js/search.js`, `html/sitemap.xml`, `html/assets/img/cms/*`, `html/assets/img/og-cover.jpg`,
+- GitHub: `html/**/*.html`, `html/assets/js/routes.js`, `html/assets/js/search.js`, `html/sitemap.xml`, `html/assets/img/cms/*`, `html/assets/projects/cms-*`, `html/assets/img/og-cover.jpg`,
   `html/assets/hero/{d,m}/*.webp`.
 
 ## VIII. Script Properties (tên CỐ ĐỊNH)

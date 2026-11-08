@@ -1310,7 +1310,7 @@ body:has(.site-header:not(.is-hidden)) .stepnav { top: var(--bar-h); }
 
 /* Thư viện yêu thích: gợi ý đăng nhập, hộp hỏi đồng bộ, thông báo nhỏ */
 .fav-login-hint { margin: -8px 0 22px; font-size: 14px; color: var(--muted-light); }
-.fav-login-hint[hidden], .fav-empty[hidden], .masonry[hidden] { display: none; }
+.fav-login-hint[hidden], .fav-empty[hidden], .masonry[hidden], .masonry li[hidden], .dash-favs li[hidden] { display: none; }
 .fav-login-hint a { color: var(--white); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .fav-sync {
   width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 6px;

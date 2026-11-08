@@ -3,8 +3,6 @@
 // - Đã đăng nhập: lưu theo tài khoản (API /api/me/favorites, bảng D1 `favorites`);
 //   bản sao gần nhất giữ ở `casa:favorites:acct:v1` để vẽ ngay khi tải trang.
 // - Đăng nhập khi trình duyệt còn mục đã ghim: hỏi có đồng bộ vào tài khoản không.
-import { PROJECTS } from './projects-data.js';
-import { TITLES_EN, catEn } from './projects-en.js';
 import { currentLang, localPath } from './lang.js';
 import { api, cachedUser, fetchUser, onUserChange } from './session.js';
 
@@ -13,9 +11,14 @@ const ACCT_KEY = 'casa:favorites:acct:v1';
 const DECLINED_KEY = 'casa:favorites:sync-declined:v1';
 const listeners = new Set();
 
+// n = mã dự án (data-index trong HTML, không bao giờ dùng lại). Dự án đã xoá vẫn có thể nằm
+// trong danh sách đã lưu — chỉ là không có thẻ HTML tương ứng nên không hiện ra.
 const clean = (arr) => (Array.isArray(arr)
-  ? [...new Set(arr.filter((n) => Number.isInteger(n) && PROJECTS[n]))]
+  ? [...new Set(arr.filter((n) => Number.isInteger(n) && n >= 0 && n <= 9999))]
   : []);
+
+// Ảnh của dự án n lấy từ HTML tĩnh đang có trên trang (thẻ lưới dự án hoặc thẻ thư viện).
+const projectImg = (n) => document.querySelector(`.pin[data-index="${n}"] img, [data-fav-item="${n}"] img`);
 
 function load(key, fallback) {
   try {
@@ -157,10 +160,8 @@ function showSyncDialog(missing, sig) {
   dlg.className = 'fav-sync';
   dlg.setAttribute('data-fav-sync', '');
   dlg.setAttribute('aria-labelledby', 'fav-sync-title');
-  const thumbs = missing.slice(0, 4).map((i) => {
-    const p = PROJECTS[i];
-    return `<li><img src="${p.img}" width="${p.w}" height="${p.h}" alt="" loading="lazy"></li>`;
-  }).join('');
+  const thumbs = missing.map(projectImg).filter(Boolean).slice(0, 4).map((im) =>
+    `<li><img src="${im.getAttribute('src')}" width="${im.getAttribute('width')}" height="${im.getAttribute('height')}" alt="" loading="lazy"></li>`).join('');
   const email = escapeHtml(user.email || '');
   dlg.innerHTML = `
     <div class="fav-sync__inner">
@@ -168,7 +169,7 @@ function showSyncDialog(missing, sig) {
       <p class="fav-sync__text">${en
         ? `This browser has <strong>${n} pinned project${n > 1 ? 's' : ''}</strong> saved before you signed in. Add ${n > 1 ? 'them' : 'it'} to <strong>${email}</strong> so you can see ${n > 1 ? 'them' : 'it'} on any device?`
         : `Trình duyệt này đang có <strong>${n} dự án đã ghim</strong> từ lúc chưa đăng nhập. Thêm vào tài khoản <strong>${email}</strong> để xem lại trên mọi thiết bị?`}</p>
-      <ul class="fav-sync__thumbs">${thumbs}</ul>
+      ${thumbs ? `<ul class="fav-sync__thumbs">${thumbs}</ul>` : ''}
       <p class="fav-sync__status" role="status" aria-live="polite" data-fav-sync-status></p>
       <div class="fav-sync__actions">
         <button class="account-btn account-btn--primary" type="button" data-fav-sync-yes>${en ? 'Sync to my account' : 'Đồng bộ vào tài khoản'}</button>
@@ -271,21 +272,13 @@ export function initPinFavorites(scope = document) {
   });
 }
 
-function cardMarkup(item, index) {
-  const en = currentLang() === 'en';
-  const title = en ? (TITLES_EN[index] || item.title) : item.title;
-  const cat = en ? catEn(item.cat) : item.cat;
-  const href = item.link || item.img;
-  return `
-    <div class="pin-wrap">
-      <a class="pin" href="${href}" target="_blank" rel="noopener">
-        <img src="${item.img}" width="${item.w}" height="${item.h}" loading="lazy" decoding="async" alt="${title}">
-        <span class="pin__info">${title}<small>${cat}${item.domain ? ` · ${item.domain}` : ''}</small></span>
-      </a>
-      <button class="fav-card__remove" type="button" data-fav-remove="${index}" aria-label="${en ? 'Remove' : 'Bỏ yêu thích'} ${title}">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-    </div>`;
+/** Hiện các mục (HTML tĩnh, ẩn sẵn) theo danh sách đã ghim, đúng thứ tự ghim. Trả về số mục hiện. */
+function showPinned(box, list, max = Infinity) {
+  const items = new Map([...box.querySelectorAll('[data-fav-item]')].map((li) => [Number(li.dataset.favItem), li]));
+  const shown = list.filter((i) => items.has(i)).slice(0, max);
+  items.forEach((li) => { li.hidden = true; });
+  shown.forEach((i) => { const li = items.get(i); li.hidden = false; box.appendChild(li); });
+  return shown.length;
 }
 
 export function initFavoritesPage() {
@@ -306,12 +299,12 @@ export function initFavoritesPage() {
         : (en ? 'Saved in this browser' : 'Lưu trên trình duyệt này');
     }
     guestHint.forEach((el) => { el.hidden = Boolean(user); });
-    grid.innerHTML = list.map((i) => `<li>${cardMarkup(PROJECTS[i], i)}</li>`).join('');
-    grid.hidden = list.length === 0;
-    if (empty) empty.hidden = list.length !== 0;
+    const n = showPinned(grid, list);
+    grid.hidden = n === 0;
+    if (empty) empty.hidden = n !== 0;
     if (count) count.textContent = en
-      ? `${String(list.length).padStart(2, '0')} pinned items`
-      : `${String(list.length).padStart(2, '0')} mục đã ghim`;
+      ? `${String(n).padStart(2, '0')} pinned items`
+      : `${String(n).padStart(2, '0')} mục đã ghim`;
   };
 
   grid.addEventListener('click', (e) => {
@@ -336,12 +329,10 @@ export function initFavoritesPreview() {
   const note = document.querySelector('[data-fav-preview-count]');
 
   const render = () => {
-    const list = readFavorites();
+    const all = readFavorites();
     const en = currentLang() === 'en';
-    box.innerHTML = list.slice(0, 8).map((i) => {
-      const p = PROJECTS[i];
-      return `<li><img src="${p.img}" width="${p.w}" height="${p.h}" loading="lazy" alt="${en ? (TITLES_EN[i] || p.title) : p.title}"></li>`;
-    }).join('');
+    showPinned(box, all, 8);
+    const list = all.filter((i) => box.querySelector(`[data-fav-item="${i}"]`));
     box.hidden = list.length === 0;
     if (empty) empty.hidden = list.length !== 0;
     if (link) {

@@ -10,7 +10,8 @@ Dịch bằng từ điển từng dùng ở runtime (scripts/i18n/dict.json, xu�
   - thẻ có data-i18n="key"  -> EN[key]
   - đoạn chữ khớp nguyên văn câu trong PHRASES -> bản dịch
   - thuộc tính alt / aria-label / title / placeholder khớp PHRASES
-  - 34 thẻ dự án (.pin) -> tên + danh mục tiếng Anh
+  - 34 thẻ dự án (.pin) -> tên + danh mục tiếng Anh (chỉ khi sinh lần đầu; vùng dự án của bản EN
+    đã có do CMS quản lý — mục Dự án — nên được GIỮ NGUYÊN khi chạy lại với --force)
   - <title>, meta description -> bảng META_EN bên dưới
   - link nội bộ "/x/" -> "/en/x/" (trừ /assets, /api, /admin, file tĩnh)
 
@@ -181,6 +182,20 @@ def translate(s, path, stats):
     return s
 
 
+# Vùng dự án (Trang chủ / Thư viện yêu thích / thẻ tài khoản) do CMS ghi riêng từng ngôn ngữ.
+PROJECT_ULS = [r'<ul class="masonry" id="projects-masonry"[^>]*>.*?</ul>',
+               r'<ul class="masonry" data-fav-grid[^>]*>.*?</ul>',
+               r'<ul class="dash-favs" data-fav-preview[^>]*>.*?</ul>']
+
+
+def keep_cms_projects(new, old):
+    for pat in PROJECT_ULS:
+        m = re.search(pat, old, flags=re.S)
+        if m and re.search(pat, new, flags=re.S):
+            new = re.sub(pat, lambda _: m.group(0), new, count=1, flags=re.S)
+    return new
+
+
 def main():
     force = "--force" in sys.argv
     only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
@@ -194,6 +209,8 @@ def main():
             continue
         stats = {"hit": 0, "miss": []}
         s = translate(file_for(path).read_text(encoding="utf-8"), path, stats)
+        if out.exists():
+            s = keep_cms_projects(s, out.read_text(encoding="utf-8"))
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(s, encoding="utf-8")
         print(f"ok {EN_ROUTES[path]}: dịch {stats['hit']}, còn tiếng Việt {len(stats['miss'])}")

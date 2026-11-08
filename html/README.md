@@ -28,7 +28,7 @@ index.html              các trang con nằm trong thư mục riêng
 
 - Mỗi trang là một file HTML đầy đủ: header, menu, tìm kiếm và footer được chép trực tiếp vào từng trang (không dùng partial, không có bước build).
 - Thư viện ngoài lấy qua CDN: GSAP + ScrollTrigger 3.15.0 (jsDelivr), font Google Fonts.
-- `assets/js/projects-data.js` giữ tiêu đề/nguồn của 34 dự án cho lightbox; danh sách 34 thẻ dự án đã nằm sẵn trong `index.html`.
+- Dự án tiêu biểu nằm hẳn trong HTML tĩnh (`index.html`, `en/index.html`: ảnh + tên + `data-cat/data-note/data-link/…` trên từng `.pin`; bản ẩn sẵn ở Thư viện yêu thích + trang tài khoản). Quản lý ở CMS, mục **Dự án**. JS chỉ mở lightbox và ẩn/hiện.
 - Ghim dự án: `assets/js/favorites.js`. Chưa đăng nhập → lưu `localStorage` (`casa:favorites:v1`); đã đăng nhập → lưu theo tài khoản (API `/api/me/favorites`, bảng D1 `favorites`, migration `0002_favorites.sql`). Khi đăng nhập mà trình duyệt còn mục đã ghim, hiện hộp hỏi "Đồng bộ vào tài khoản" (đồng ý = gộp vào tài khoản và xoá bản trên trình duyệt; "Để sau" = không hỏi lại cho đến khi danh sách đổi). Trạng thái đăng nhập dùng chung ở `assets/js/session.js`.
 - Thêm trang mới: chạy `python3 scripts/site_chrome.py` (gắn Google Analytics + link pháp lý ở footer), thêm đường dẫn vào `PAGES` trong `scripts/seo.py` rồi chạy `python3 scripts/seo.py`.
 - Ngôn ngữ: 2 bản tĩnh — tiếng Việt `/x/`, tiếng Anh dưới `/en/` với slug tiếng Anh (`/en/account/`, `/en/services/`…; bảng ở `assets/js/routes.js`). Nút cờ chuyển URL (`assets/js/lang.js`). Bản EN khởi tạo bằng `scripts/build_en.py`, sau đó sửa qua CMS (xem `GAS.md` mục III-a).

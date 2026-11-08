@@ -3,7 +3,7 @@
    PUT    /api/me/favorites/<n>        -> ghim dự án n
    DELETE /api/me/favorites/<n>        -> bỏ ghim
    POST   /api/me/favorites/merge      { items: [n, ...] } -> gộp danh sách từ trình duyệt vào tài khoản
-   n = vị trí dự án trong PROJECTS (html/assets/js/projects-data.js). */
+   n = mã dự án = data-index của thẻ .pin ở Trang chủ (HTML tĩnh, CMS không dùng lại mã đã xoá). */
 import { json, HttpError, readBody } from "./http.js";
 import { currentUser, nowIso } from "./auth.js";
 

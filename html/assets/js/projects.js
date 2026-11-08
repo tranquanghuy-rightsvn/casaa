@@ -1,6 +1,4 @@
-import { currentLang, t } from './lang.js';
-import { TITLES_EN, catEn } from './projects-en.js';
-import { PROJECTS } from './projects-data.js';
+import { t } from './lang.js';
 import { initReveal } from './reveal.js';
 import { lockScroll, unlockScroll } from './lock.js';
 import { isFavorite, toggleFavorite, onFavoritesChange } from './favorites.js';
@@ -9,11 +7,11 @@ export function initProjects() {
   const list = document.querySelector('[data-projects]');
   if (!list) return;
 
-  // The pins are already in the HTML (built by the prerenderProjects plugin);
-  // this module only binds the lightbox and the expand/collapse toggle.
+  // Toàn bộ dữ liệu dự án nằm sẵn trong HTML tĩnh (CMS ghi): ảnh + tên trong thẻ .pin,
+  // danh mục / nguồn / nhà cung cấp ở thuộc tính data-*. Module này chỉ mở lightbox + nút Xem thêm.
   const pins = [...list.querySelectorAll('.pin')];
   if (!pins.length) return;
-  const items = pins.map((btn) => PROJECTS[Number(btn.dataset.index)]);
+  const items = pins;
 
   initReveal(list);
 
@@ -65,22 +63,27 @@ function initLightbox(items, list) {
     if (favLabel) favLabel.textContent = on ? t('Đã lưu vào thư viện yêu thích', 'Saved to favourites') : t('Lưu vào thư viện yêu thích', 'Save to favourites library');
   };
 
+  const supplier = ['name', 'phone', 'email', 'address', 'website'].map((k) => [k, dlg.querySelector(`[data-lb-supplier-${k}]`)]);
+  const cap = (k) => k[0].toUpperCase() + k.slice(1);
+
   const fill = (i) => {
     index = (i + items.length) % items.length;
-    const p = items[index];
-    projectIndex = PROJECTS.indexOf(p);
-    img.src = p.img;
-    img.width = p.w;
-    img.height = p.h;
-    const en = currentLang() === 'en';
-    const name = en ? (TITLES_EN[projectIndex] || p.title) : p.title;
-    img.alt = name;
-    cat.textContent = en ? catEn(p.cat) : p.cat;
-    title.textContent = name;
-    note.textContent = p.note ? `${t('Nguồn', 'Source')}: ${p.note}` : '';
-    link.hidden = !p.link;
-    if (p.link) { link.href = p.link; link.textContent = p.domain ? `${t('Xem nguồn gốc', 'View source')} (${p.domain})` : t('Xem nguồn gốc', 'View source'); }
-    pin.href = p.pin;
+    const btn = items[index];
+    const d = btn.dataset;
+    const src = btn.querySelector('img');
+    projectIndex = Number(d.index);
+    img.src = src.getAttribute('src');
+    img.width = Number(src.getAttribute('width')) || 0;
+    img.height = Number(src.getAttribute('height')) || 0;
+    img.alt = src.alt;
+    cat.textContent = d.cat || '';
+    title.textContent = src.alt;
+    note.textContent = d.note ? `${t('Nguồn', 'Source')}: ${d.note}` : '';
+    link.hidden = !d.link;
+    if (d.link) { link.href = d.link; link.textContent = d.domain ? `${t('Xem nguồn gốc', 'View source')} (${d.domain})` : t('Xem nguồn gốc', 'View source'); }
+    pin.hidden = !d.pinterest;
+    if (d.pinterest) pin.href = d.pinterest;
+    supplier.forEach(([k, el]) => { if (el) el.textContent = d['s' + cap(k)] || ''; });
     count.textContent = `${index + 1} / ${items.length}`;
     paintFav();
   };
