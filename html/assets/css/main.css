@@ -1444,8 +1444,9 @@ body:has(.site-header:not(.is-hidden)) .stepnav { top: var(--bar-h); }
 .float-contact { position: fixed; right: 18px; bottom: 22px; z-index: 40; display: flex; flex-direction: column; gap: 12px; }
 .float-contact__btn { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.45); transition: transform .2s ease, box-shadow .2s ease; }
 .float-contact__btn:hover, .float-contact__btn:focus-visible { transform: scale(1.08); box-shadow: 0 8px 22px rgba(0,0,0,.55); }
-.float-contact__btn--phone { background: #bf1118; }
-.float-contact__btn--zalo { background: #0068ff; }
+.float-contact__btn--phone, .float-contact__btn--zalo { background: #000; color: #fff; border: 1px solid rgba(255,255,255,.35); }
+.float-contact__btn--zalo path { fill: #fff; }
+.float-contact__btn--zalo text { fill: #000; }
 @media (max-width: 767px) { .float-contact { right: 12px; bottom: 16px; } .float-contact__btn { width: 48px; height: 48px; } }
 
 @media (max-width: 767px) { .float-contact { bottom: 78px; } .slide__feats li { align-items: flex-start; } }
