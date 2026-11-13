@@ -12,6 +12,8 @@ export function initProjects() {
   const pins = [...list.querySelectorAll('.pin')];
   if (!pins.length) return;
   const items = pins;
+  // Quy ước: data-index = mã dự án (dùng cho Yêu thích), vị trí trong lightbox = vị trí trong `items`.
+  // Hai thứ này lệch nhau ngay khi CMS sắp xếp lại / xoá / thêm dự án → tuyệt đối không dùng lẫn.
 
   initReveal(list);
 
@@ -115,7 +117,9 @@ function initLightbox(items, list) {
 
   list.addEventListener('click', (e) => {
     const btn = e.target.closest('.pin');
-    if (btn) open(Number(btn.dataset.index), btn);
+    // data-index là MÃ dự án (ổn định, không liền mạch, không theo thứ tự) — KHÔNG phải vị trí trong mảng.
+    // Vị trí phải lấy từ chính phần tử được bấm.
+    if (btn) open(items.indexOf(btn), btn);
   });
   dlg.querySelector('[data-lb-close]').addEventListener('click', close);
   dlg.querySelector('[data-lb-prev]').addEventListener('click', () => show(index - 1, -1));
