@@ -1,7 +1,7 @@
 import { initForge } from './forge.js';
 
-// Same scene-by-scene behaviour on every screen size; only reduced motion gets the stacked layout.
-const PINNED = '(prefers-reduced-motion: no-preference)';
+// Same scene-by-scene behaviour on every screen size and every device setting.
+const PINNED = 'all'; // cùng bố cục trên mọi máy (kể cả máy bật giảm chuyển động)
 
 export function initHome() {
   initHero();

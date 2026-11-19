@@ -1,6 +1,6 @@
 // Products page: pinned scene-by-scene showcase (same behaviour as the home
 // solutions section, kept as a separate module so the page owns its own flow).
-const PINNED = '(prefers-reduced-motion: no-preference)';
+const PINNED = 'all'; // cùng bố cục trên mọi máy (kể cả máy bật giảm chuyển động)
 
 export function initProducts() {
   const section = document.querySelector('[data-products]');

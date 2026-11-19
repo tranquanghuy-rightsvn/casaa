@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" data-cms-g-href="favicon" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montaga&family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/assets/css/main.css">
   <script>document.documentElement.classList.add('js');</script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
@@ -230,6 +230,30 @@
             <button class="btn-glass btn-glass--sans btn-glass--dark contact-form__submit" type="submit">Gửi thông tin</button>
             <p class="contact-form__status" role="status" data-form-status></p>
           </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trải nghiệm in mẫu 3D miễn phí: khách gửi link Google Drive (form gửi về CMS mục Liên hệ) -->
+    <section class="section trial" id="trai-nghiem" aria-labelledby="trial-title">
+      <div class="container">
+        <div class="trial-card" data-reveal>
+          <form class="contact-form trial-card__form" novalidate data-contact-form data-endpoint="https://script.google.com/macros/s/AKfycbxV8YNx7ati6_cFAEnyMITRvpo3scwdBayVV7D0AMEjXSAQepZLPIuK6AjuhEZNn8Fm/exec">
+            <div class="visually-hidden" aria-hidden="true"><label>Website <input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+            <input type="hidden" name="nhu_cau" value="trai-nghiem">
+            <h2 class="trial-card__title" id="trial-title" data-cms-t="15">Trải nghiệm in mẫu 3D Miễn Phí</h2>
+            <p class="trial-card__lead" data-cms-h="16">Vui lòng điền đủ thông tin để chúng tôi có thể hỗ trợ bạn tốt hơn.</p>
+            <div class="field">
+              <label for="t-link">Đường link Google Drive</label>
+              <input id="t-link" name="link" type="url" inputmode="url" placeholder="https://drive.google.com/..." required aria-describedby="te-link">
+              <p class="field__error" id="te-link" aria-live="polite"></p>
+            </div>
+            <button class="btn-glass btn-glass--sans btn-glass--red contact-form__submit" type="submit">Gửi thông tin</button>
+            <p class="contact-form__status" role="status" data-form-status></p>
+          </form>
+          <div class="trial-card__media">
+            <img src="/assets/img/pd-n6196-61.webp" width="1100" height="590" loading="lazy" alt="Cánh tay robot in 3D mẫu gốm tại xưởng Casa+" data-cms-img="17">
+          </div>
         </div>
       </div>
     </section>

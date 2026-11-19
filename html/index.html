@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" data-cms-g-href="favicon" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montaga&family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/assets/css/main.css">
   <script>document.documentElement.classList.add('js');</script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
@@ -152,7 +152,8 @@
   </div>
 
   <main id="main">
-    <!-- Hero: cuộn để tua video (chuỗi khung hình vẽ lên canvas), nằm dưới thanh điều hướng trong suốt -->
+    <!-- Hero: mốc data-from / data-at canh theo cảnh trong video (khung 0–119): đổi video thì canh lại.
+         Hero: cuộn để tua video (chuỗi khung hình vẽ lên canvas), nằm dưới thanh điều hướng trong suốt -->
     <section class="forge" id="hero" aria-labelledby="hero-title" data-forge>
       <div class="forge__pin">
         <div class="forge__stage" aria-hidden="true">
@@ -168,21 +169,25 @@
           <div class="forge__chapters">
             <article class="forge__ch is-active" data-from="0">
               <h1 class="hero__title" id="hero-title" data-cms-h="1">
-                <span class="line">Kiến Trúc&nbsp;<span>Gốm In 3D</span></span>
+                <span class="line"><span>Kiến Trúc Gốm In 3D</span></span>
               </h1>
               <p class="hero__lead" data-i18n="hero.lead" data-cms-t="2">Gạch và vách gốm thế hệ mới siêu bền, giúp cách nhiệt, làm mát nhà và tạo diện mạo sang trọng, khác biệt.</p>
             </article>
-            <article class="forge__ch" data-from="0.28">
-              <h2 class="forge__h" data-cms-t="3">Lam Phù Điêu</h2>
-              <p data-cms-t="4">Thanh gốm uốn lượn che nắng, đón gió cho mặt tiền và tạo hiệu ứng bóng đổ nghệ thuật theo ánh nắng.</p>
+            <article class="forge__ch" data-from="0.22">
+              <h2 class="forge__h" data-cms-t="3">Tranh Phù Điêu</h2>
+              <p data-cms-t="4">Tranh gốm đắp nổi 3D tinh xảo, biến mảng tường trống thành điểm nhấn nghệ thuật đẳng cấp.</p>
             </article>
-            <article class="forge__ch" data-from="0.54">
-              <h2 class="forge__h" data-cms-t="5">Tranh Phù Điêu</h2>
-              <p data-cms-t="6">Tranh gốm đắp nổi 3D tinh xảo, biến mảng tường trống thành điểm nhấn nghệ thuật đẳng cấp.</p>
+            <article class="forge__ch" data-from="0.42">
+              <h2 class="forge__h" data-cms-t="5">Lam Nắng Phù Điêu</h2>
+              <p data-cms-t="6">Thanh gốm uốn lượn che nắng, đón gió cho mặt tiền và tạo hiệu ứng bóng đổ nghệ thuật theo ánh nắng.</p>
             </article>
-            <article class="forge__ch" data-from="0.8">
-              <h2 class="forge__h" data-cms-t="7">Gạch Chuyển Màu</h2>
+            <article class="forge__ch" data-from="0.81">
+              <h2 class="forge__h" data-cms-t="7">Gạch Ốp Chuyển Màu</h2>
               <p data-cms-t="8">Gạch ốp tạo hiệu ứng chuyển sắc đậm nhạt mượt mà, giúp bức tường thêm chiều sâu và tinh tế.</p>
+            </article>
+            <article class="forge__ch" data-from="0.85">
+              <h2 class="forge__h" data-cms-t="103">Artwork &amp; Decor</h2>
+              <p data-cms-t="104">Điêu khắc nội thất, cảnh quan, đèn gốm xuyên sáng và vật phẩm trang trí may đo độc bản.</p>
             </article>
           </div>
 
@@ -190,9 +195,10 @@
             <div class="forge__meter"><span class="forge__fill"></span></div>
             <ol class="forge__steps">
               <li data-at="0" data-cms-t="9">Kiến Trúc Gốm In 3D</li>
-              <li data-at="0.28" data-cms-t="10">Lam Phù điêu</li>
-              <li data-at="0.54" data-cms-t="11">Tranh Phù điêu</li>
-              <li data-at="0.8" data-cms-t="12">Gạch chuyển màu</li>
+              <li data-at="0.22" data-cms-t="10">Tranh Phù Điêu</li>
+              <li data-at="0.42" data-cms-t="11">Lam Nắng Phù Điêu</li>
+              <li data-at="0.81" data-cms-t="12">Gạch Ốp Chuyển Màu</li>
+              <li data-at="0.85" data-cms-t="105">Artwork &amp; Decor</li>
             </ol>
             <p class="forge__pct"><span>0</span>%</p>
           </div>
@@ -218,10 +224,10 @@
               <h3 class="slide__name" data-cms-h="16"><span class="slide__name-main" data-i18n="story.title">Câu chuyện Casa⁺</span> <span class="slide__name-sub" data-i18n="story.sub">Trong Không Gian Sống</span></h3>
               <p class="slide__tagline" data-i18n="story.lead" data-cms-t="17">Giá trị truyền thống trong phong cách hiện đại</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="18">Bản sắc / văn hóa</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="19">Thiết kế / tham số</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="20">Chế tác / in 3D</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="21">Ưu thế / vượt trội</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="106"><span data-cms-t="18">Bản sắc / văn hóa</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="107"><span data-cms-t="19">Thiết kế / tham số</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="108"><span data-cms-t="20">Chế tác / in 3D</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="109"><span data-cms-t="21">Ưu thế / vượt trội</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="/giai-phap/" data-i18n="story.cta" data-cms-t="22">Bấm để xem thêm</a>
@@ -240,10 +246,10 @@
               <h3 class="slide__name" data-cms-h="25"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">Lam Nắng Phù Điêu</span></h3>
               <p class="slide__tagline" data-cms-t="26">Bằng cấu trúc biết thở</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="27">Chắn nắng / hướng Tây</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="28"> Làm mát / tự nhiên</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="29">Nung gốm / 1200°C</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="30"> Khung treo / Inox 304</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="110"><span data-cms-t="27">Chắn nắng / hướng Tây</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="111"><span data-cms-t="28"> Làm mát / tự nhiên</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="112"><span data-cms-t="29">Nung gốm / 1200°C</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="113"><span data-cms-t="30"> Khung treo / Inox 304</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="/san-pham/lam-che-nang/" data-cms-h="31"><span data-i18n="cta.detail">Bấm để xem thêm</span><span class="visually-hidden"> về lam che nắng gốm 3D</span></a>
@@ -262,10 +268,10 @@
               <h3 class="slide__name" data-cms-h="34"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">Gạch Ốp Chuyển Màu</span></h3>
               <p class="slide__tagline" data-cms-t="35">Trên đường nét thuật toán</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="36">Men chảy / chuyển sắc</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="37">Chống cháy / chuẩn A1</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="38">Bền màu / vĩnh cửu</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="39">Chống bám / rêu mốc</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="114"><span data-cms-t="36">Men chảy / chuyển sắc</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="115"><span data-cms-t="37">Chống cháy / chuẩn A1</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="116"><span data-cms-t="38">Bền màu / vĩnh cửu</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="117"><span data-cms-t="39">Chống bám / rêu mốc</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="40"><span data-i18n="cta.contact">Liên hệ tư vấn</span><span class="visually-hidden"> về gạch ốp chuyển màu</span></a>
@@ -284,10 +290,10 @@
               <h3 class="slide__name" data-cms-h="43"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">Tranh Phù Điêu In 3D</span></h3>
               <p class="slide__tagline" data-cms-t="44">Không tốn khuôn đút mẫu</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="45">Biên dạng / độc bản</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="46">Ghép nối / chuẩn BIM</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="47">Biên dạng / độc bản</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="48">Đất nung / tự nhiên</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="118"><span data-cms-t="45">Biên dạng / độc bản</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="119"><span data-cms-t="46">Ghép nối / chuẩn BIM</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="120"><span data-cms-t="47">Biên dạng / độc bản</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="121"><span data-cms-t="48">Đất nung / tự nhiên</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="49"><span data-i18n="cta.contact">Liên hệ tư vấn</span><span class="visually-hidden"> về gạch phù điêu in 3D</span></a>
@@ -306,10 +312,10 @@
               <h3 class="slide__name" data-cms-h="52"><span class="slide__name-main">Artwork &amp; Đồ Decor Gốm</span> <span class="slide__name-sub">Điêu khắc nội thất, cảnh quan</span></h3>
               <p class="slide__tagline" data-cms-t="53">Và ánh sáng độc bản</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="54">Nội thất / cảnh quan</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="55">Cấu trúc / biểu tượng</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="56">Đèn gốm / xuyên sáng</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="57">Chế tác / may đo</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="122"><span data-cms-t="54">Nội thất / cảnh quan</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="123"><span data-cms-t="55">Cấu trúc / biểu tượng</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="124"><span data-cms-t="56">Đèn gốm / xuyên sáng</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="125"><span data-cms-t="57">Chế tác / may đo</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="58"><span data-i18n="cta.contact">Liên hệ tư vấn</span><span class="visually-hidden"> về artwork và đồ decor gốm</span></a>
@@ -328,10 +334,10 @@
               <h3 class="slide__name" data-cms-h="61"><span class="slide__name-main">Rạn San Hô In 3D</span> <span class="slide__name-sub">Giá thể đất nung xốp</span></h3>
               <p class="slide__tagline" data-cms-t="62">Tái tạo hệ sinh thái</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="63">Đất nung / pH chuẩn</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="64">Vi hốc / đa tầng</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="65">Hồ cảnh / Aquascape</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="66">Bảo tồn / biển ESG</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="126"><span data-cms-t="63">Đất nung / pH chuẩn</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="127"><span data-cms-t="64">Vi hốc / đa tầng</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="128"><span data-cms-t="65">Hồ cảnh / Aquascape</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="129"><span data-cms-t="66">Bảo tồn / biển ESG</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="67"><span data-i18n="cta.contact">Liên hệ tư vấn</span><span class="visually-hidden"> về rạn san hô in 3D</span></a>
@@ -391,7 +397,7 @@
           <p class="section-lead" data-i18n="process.lead" data-cms-t="80">Năm bước từ câu chuyện của công trình đến viên gạch được lắp đặt. Chọn một bước để đọc chi tiết.</p>
         </div>
       </div>
-      <div class="container-wide">
+      <div class="container">
         <ol class="steps" data-steps>
           <li class="steps__item" data-reveal style="--i:0">
             <a class="step-card" href="/tien-trinh/cau-chuyen/">

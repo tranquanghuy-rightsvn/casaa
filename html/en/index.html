@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" data-cms-g-href="favicon" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montaga&family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Montserrat:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="/assets/css/main.css">
   <script>document.documentElement.classList.add('js');</script>
   <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
@@ -152,7 +152,8 @@
   </div>
 
   <main id="main">
-    <!-- Hero: cuộn để tua video (chuỗi khung hình vẽ lên canvas), nằm dưới thanh điều hướng trong suốt -->
+    <!-- Hero: mốc data-from / data-at canh theo cảnh trong video (khung 0–119): đổi video thì canh lại.
+         Hero: cuộn để tua video (chuỗi khung hình vẽ lên canvas), nằm dưới thanh điều hướng trong suốt -->
     <section class="forge" id="hero" aria-labelledby="hero-title" data-forge>
       <div class="forge__pin">
         <div class="forge__stage" aria-hidden="true">
@@ -168,32 +169,36 @@
           <div class="forge__chapters">
             <article class="forge__ch is-active" data-from="0">
               <h1 class="hero__title" id="hero-title" data-cms-h="1">
-                <span class="line"><span data-i18n="hero.title1">Ceramic Bricks</span></span>
-                <span class="line"><span data-i18n="hero.title2">for Architecture</span></span>
+                <span class="line"><span>3D-Printed Ceramic Architecture</span></span>
               </h1>
-              <p class="hero__lead" data-i18n="hero.lead" data-cms-t="2">Researching, designing and crafting ceramics with 3D printing — from the first sample tile to the building facade.</p>
+              <p class="hero__lead" data-i18n="hero.lead" data-cms-t="2">Next-generation, ultra-durable ceramic tiles and screens that insulate, cool the home and give it a distinctive, refined look.</p>
             </article>
-            <article class="forge__ch" data-from="0.28">
-              <h2 class="forge__h" data-cms-t="3">Space takes shape</h2>
-              <p data-cms-t="4">Interiors, light and terracotta walls come together into one warm, earthy whole.</p>
+            <article class="forge__ch" data-from="0.22">
+              <h2 class="forge__h" data-cms-t="3">Relief Murals</h2>
+              <p data-cms-t="4">Intricate 3D-printed ceramic reliefs turn a blank wall into a striking artistic focal point.</p>
             </article>
-            <article class="forge__ch" data-from="0.54">
-              <h2 class="forge__h" data-cms-t="5">3D-printed relief on a ceramic wall</h2>
-              <p data-cms-t="6">Patterns are parametrically designed, 3D-printed in terracotta and mounted like a work of art.</p>
+            <article class="forge__ch" data-from="0.42">
+              <h2 class="forge__h" data-cms-t="5">Relief Sun Louvres</h2>
+              <p data-cms-t="6">Undulating ceramic louvres shade the facade, let the breeze through and cast artistic shadows as the sun moves.</p>
             </article>
-            <article class="forge__ch" data-from="0.8">
-              <h2 class="forge__h" data-cms-t="7">Every wall tells a story</h2>
-              <p data-cms-t="8">From raw brick to one-off relief, Casa+ crafts for your exact space.</p>
+            <article class="forge__ch" data-from="0.81">
+              <h2 class="forge__h" data-cms-t="7">Colour-Gradient Tiles</h2>
+              <p data-cms-t="8">Wall tiles with a smooth light-to-dark colour shift that gives the wall depth and finesse.</p>
+            </article>
+            <article class="forge__ch" data-from="0.85">
+              <h2 class="forge__h" data-cms-t="103">Artwork &amp; Decor</h2>
+              <p data-cms-t="104">Interior and landscape sculpture, light-through ceramic lamps and one-off bespoke decorative pieces.</p>
             </article>
           </div>
 
           <div class="forge__gauge" aria-hidden="true">
             <div class="forge__meter"><span class="forge__fill"></span></div>
             <ol class="forge__steps">
-              <li data-at="0" data-cms-t="9">Space</li>
-              <li data-at="0.28" data-cms-t="10">Interior</li>
-              <li data-at="0.54" data-cms-t="11">Relief</li>
-              <li data-at="0.8" data-cms-t="12">Finishes</li>
+              <li data-at="0" data-cms-t="9">3D-Printed Ceramic Architecture</li>
+              <li data-at="0.22" data-cms-t="10">Relief Murals</li>
+              <li data-at="0.42" data-cms-t="11">Relief Sun Louvres</li>
+              <li data-at="0.81" data-cms-t="12">Colour-Gradient Tiles</li>
+              <li data-at="0.85" data-cms-t="105">Artwork &amp; Decor</li>
             </ol>
             <p class="forge__pct"><span>0</span>%</p>
           </div>
@@ -219,10 +224,10 @@
               <h3 class="slide__name" data-cms-h="16"><span class="slide__name-main" data-i18n="story.title">The Casa⁺ Story</span> <span class="slide__name-sub" data-i18n="story.sub">In Living Spaces</span></h3>
               <p class="slide__tagline" data-i18n="story.lead" data-cms-t="17">Traditional values in a modern style</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="18">Cultural / identity</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="19">Parametric / design</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="20">3D / crafted</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="21">Superior / edge</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="106"><span data-cms-t="18">Cultural / identity</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="107"><span data-cms-t="19">Parametric / design</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="108"><span data-cms-t="20">3D / crafted</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="109"><span data-cms-t="21">Superior / edge</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="/en/solutions/" data-i18n="story.cta" data-cms-t="22">Discover more</a>
@@ -241,10 +246,10 @@
               <h3 class="slide__name" data-cms-h="25"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">3D Ceramic Sun Screen</span></h3>
               <p class="slide__tagline" data-cms-t="26">With a breathing structure</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="27">Breathing structure</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="28">Facade heat reduction</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="29">Parametric design</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="30">Durable at 1200°C</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="110"><span data-cms-t="27">Breathing structure</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="111"><span data-cms-t="28">Facade heat reduction</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="112"><span data-cms-t="29">Parametric design</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="113"><span data-cms-t="30">Durable at 1200°C</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="/en/products/sun-louvers/" data-cms-h="31"><span data-i18n="cta.detail">Discover more</span><span class="visually-hidden"> about the 3D ceramic sun screen</span></a>
@@ -263,10 +268,10 @@
               <h3 class="slide__name" data-cms-h="34"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">Colour-Shift Wall Tile</span></h3>
               <p class="slide__tagline" data-cms-t="35">On algorithmic lines</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="36">Flowing glaze / colour shift</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="37">Fireproof / A1 rated</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="38">Colourfast / lasting</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="39">Anti-moss / anti-mould</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="114"><span data-cms-t="36">Flowing glaze / colour shift</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="115"><span data-cms-t="37">Fireproof / A1 rated</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="116"><span data-cms-t="38">Colourfast / lasting</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="117"><span data-cms-t="39">Anti-moss / anti-mould</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="40"><span data-i18n="cta.contact">Contact us</span><span class="visually-hidden"> about colour-shift wall tile</span></a>
@@ -285,10 +290,10 @@
               <h3 class="slide__name" data-cms-h="43"><span class="slide__name-main">FACADE</span> <span class="slide__name-sub">3D-Printed Relief Tile</span></h3>
               <p class="slide__tagline" data-cms-t="44">No mould cost</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="45">Profile / one-of-a-kind</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="46">Joints / BIM standard</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="47">Profile / one-of-a-kind</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="48">Terracotta / natural</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="118"><span data-cms-t="45">Profile / one-of-a-kind</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="119"><span data-cms-t="46">Joints / BIM standard</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="120"><span data-cms-t="47">Profile / one-of-a-kind</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="121"><span data-cms-t="48">Terracotta / natural</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="49"><span data-i18n="cta.contact">Contact us</span><span class="visually-hidden"> about 3D-printed relief tile</span></a>
@@ -307,10 +312,10 @@
               <h3 class="slide__name" data-cms-h="52"><span class="slide__name-main">Ceramic Artwork &amp; Decor</span> <span class="slide__name-sub">Sculpture for interiors and landscape</span></h3>
               <p class="slide__tagline" data-cms-t="53">And one-of-a-kind light</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="54">Interior / landscape</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="55">Structure / icon</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="56">Ceramic lamp / translucent</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="57">Crafted / bespoke</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="122"><span data-cms-t="54">Interior / landscape</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="123"><span data-cms-t="55">Structure / icon</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="124"><span data-cms-t="56">Ceramic lamp / translucent</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="125"><span data-cms-t="57">Crafted / bespoke</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="58"><span data-i18n="cta.contact">Contact us</span><span class="visually-hidden"> about ceramic artwork and decor</span></a>
@@ -329,10 +334,10 @@
               <h3 class="slide__name" data-cms-h="61"><span class="slide__name-main">3D-Printed Coral Reef</span> <span class="slide__name-sub">Porous terracotta substrate</span></h3>
               <p class="slide__tagline" data-cms-t="62">Regenerating the ecosystem</p>
               <ul class="slide__feats">
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="63">Terracotta / balanced pH</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="64">Micro-pores / multi-tier</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="65">Aquarium / Aquascape</span></li>
-                <li><img src="/assets/img/fig-leaf.webp" width="26" height="18" alt=""><span data-cms-t="66">Conservation / marine ESG</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="126"><span data-cms-t="63">Terracotta / balanced pH</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="127"><span data-cms-t="64">Micro-pores / multi-tier</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="128"><span data-cms-t="65">Aquarium / Aquascape</span></li>
+                <li><img class="feat-icon" src="/assets/img/fig-leaf.webp" width="26" height="18" alt="" data-cms-img="129"><span data-cms-t="66">Conservation / marine ESG</span></li>
               </ul>
             </div>
             <a class="btn-glass slide__cta" href="#dich-vu" data-cms-h="67"><span data-i18n="cta.contact">Contact us</span><span class="visually-hidden"> about the 3D-printed reef</span></a>
@@ -392,7 +397,7 @@
           <p class="section-lead" data-i18n="process.lead" data-cms-t="80">Five steps from the story of a project to the installed tile. Choose a step to read the details.</p>
         </div>
       </div>
-      <div class="container-wide">
+      <div class="container">
         <ol class="steps" data-steps>
           <li class="steps__item" data-reveal style="--i:0">
             <a class="step-card" href="/en/process/story/">

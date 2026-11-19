@@ -22,7 +22,21 @@ export function initForge() {
   // Without a canvas the first frame stays as a still image.
   if (!ctx) return;
 
-  steps.forEach((li) => { li.style.bottom = `${parseFloat(li.dataset.at) * 100}%`; });
+  // Các mục trong thước đo đặt cách đều nhau (mốc data-at canh theo cảnh video nên không đều);
+  // vạch đỏ chạy theo hàm nội suy để chạm đúng mục khi chữ lớn đổi sang chương đó.
+  const ats = steps.map((li) => parseFloat(li.dataset.at));
+  const slot = (i) => (steps.length > 1 ? i / steps.length : 0);
+  steps.forEach((li, i) => { li.style.bottom = `${slot(i) * 100}%`; });
+  const gaugeAt = (p) => {
+    for (let i = ats.length - 1; i >= 0; i -= 1) {
+      if (p >= ats[i]) {
+        const a0 = ats[i]; const a1 = i + 1 < ats.length ? ats[i + 1] : 1;
+        const s0 = slot(i); const s1 = i + 1 < ats.length ? slot(i + 1) : 1;
+        return a1 > a0 ? s0 + ((p - a0) / (a1 - a0)) * (s1 - s0) : s1;
+      }
+    }
+    return 0;
+  };
 
   /* ---------- Frame loading: coarse to fine, so scrubbing works before everything arrives ---------- */
   let set = null;
@@ -124,6 +138,7 @@ export function initForge() {
 
   const updateUI = (p) => {
     root.style.setProperty('--p', p.toFixed(4));
+    root.style.setProperty('--g', (steps.length ? gaugeAt(p) : p).toFixed(4));
     if (pctEl) pctEl.textContent = Math.round(p * 100);
     root.classList.toggle('is-ending', p > 0.85);
 

@@ -141,6 +141,14 @@ kynghenguyenminh (nguyenminhltd.vn).
   - Chỉ trong `<main>`. Bỏ qua phần JS sinh ra (lưới dự án `.masonry`, thư viện yêu thích, form
     tài khoản, lightbox), form, nút, svg, icon < 64px.
   - **Thêm trang/khối mới → chạy `python3 scripts/cms_tag.py`** rồi commit.
+- Thanh định dạng **B / I / U / Xoá định dạng** hiện trên ô chữ đang sửa (chốt 19/11/2026). Ô chữ thuần
+  `data-cms-t` được in đậm/nghiêng thì gửi lên dạng `h`; `saveContent` tự đổi mốc `data-cms-t="N"` →
+  `data-cms-h="N"` (giữ số) trong file đang sửa. Không cho đổi font/màu (giữ đồng bộ thiết kế).
+- Icon nhỏ cũng đổi được nếu có mốc `data-cms-img` (vd icon lá `.feat-icon` ở slider trang chủ, khung
+  hiển thị cố định 26px). Trang Tài khoản: ảnh khung Đăng nhập (mốc 3) và ảnh nền "Xin chào" (mốc 4);
+  trong CMS hiện cả 2 khung.
+- Hero trang chủ: mốc `data-from`/`data-at` canh theo cảnh trong video (khung 0–119). Đổi video hero
+  qua Quản lý chung thì dev phải canh lại các mốc này.
 - Dán chữ luôn ở dạng thuần. Server lọc HTML của mốc `-h`: chỉ giữ a, span, strong, em, b, i,
   u, br, small, sup, sub, mark; bỏ thuộc tính `on*`, `style`, link `javascript:`.
 - Ảnh: nén phía trình duyệt (cạnh dài ≤1920px, WebP 0.82; PNG giữ PNG nếu ảnh gốc là PNG). Mỗi
@@ -197,6 +205,10 @@ Mốc `data-cms-g*` (gắn bởi `cms_tag.py`):
   → không gửi mail (lead vẫn lưu), CMS mục Liên hệ và log `setup()` báo rõ. replyTo = email
   khách. Dùng chung quota MailApp (~100/ngày) với OTP đăng nhập.
 - CMS mục **Liên hệ**: lọc Chưa xử lý / Đã xử lý / Tất cả, tìm kiếm, badge số chưa xử lý ở sidebar.
+- Form thứ 2 trên /dich-vu/ (`#trai-nghiem`, "Trải nghiệm in mẫu 3D miễn phí", chốt 19/11/2026): gửi
+  `nhu_cau = "Trải nghiệm in mẫu 3D"` + `link` (link Google Drive, bắt buộc http(s)) — form CHỈ có ô link,
+  không họ tên / SĐT (theo bản mẫu của khách). GAS bỏ kiểm tra họ tên/SĐT cho loại này, giới hạn
+  1 lần/120 giây theo link, ghi link vào cột `ghi_chu` ("Link mẫu: …") và đưa vào email báo.
 
 ## VI. UX chung
 

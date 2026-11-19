@@ -25,6 +25,16 @@ function injectStyle() {
     }
     .cms-img-btn.is-on { display: block; }
     .cms-img-target { outline: 2px solid #d62828 !important; outline-offset: -2px; }
+    .cms-fmt {
+      position: absolute; z-index: 40; display: none; gap: 2px; padding: 4px; border-radius: 8px;
+      background: #1f1f1f; box-shadow: 0 6px 18px rgba(0,0,0,.4); transform: translateY(calc(-100% - 8px));
+    }
+    .cms-fmt.is-on { display: flex; }
+    .cms-fmt button {
+      min-width: 30px; height: 30px; padding: 0 8px; border: 0; border-radius: 5px; background: transparent; color: #fff;
+      font: 15px/1 Georgia, serif; cursor: pointer;
+    }
+    .cms-fmt button:hover { background: #d62828; }
   `;
   document.head.appendChild(style);
 }
@@ -47,11 +57,52 @@ function cleanHtml(el) {
   return clone.innerHTML;
 }
 
-// Dấu vân tay nội dung người dùng có thể đổi: chữ + số lần xuống dòng (Shift+Enter).
+// Dấu vân tay nội dung người dùng có thể đổi: chữ + số lần xuống dòng (Shift+Enter)
+// + phần chữ đang in đậm / nghiêng / gạch chân.
 // Không so innerHTML thô vì JS của trang (GSAP, lang.js, bộ đếm) tự đổi nó.
+const FMT = 'b, strong, i, em, u';
 function fingerprint(el) {
-  return el.textContent.replace(/\s+/g, ' ').trim() + '|' + el.querySelectorAll('br').length;
+  const fmt = [...el.querySelectorAll(FMT)].map((n) => n.tagName[0] + ':' + n.textContent.trim()).join(',');
+  return el.textContent.replace(/\s+/g, ' ').trim() + '|' + el.querySelectorAll('br').length + '|' + fmt;
 }
+
+// ----- Thanh định dạng: In đậm / In nghiêng / Gạch chân / Xoá định dạng -----
+// Hiện phía trên ô chữ đang sửa. Ô chữ thuần (data-cms-t) có định dạng sẽ được lưu như ô
+// có định dạng (data-cms-h) — GAS tự đổi mốc khi lưu.
+let fmtBar = null;
+function formatBar() {
+  if (fmtBar) return fmtBar;
+  fmtBar = document.createElement('div');
+  fmtBar.className = 'cms-fmt';
+  [['bold', '<b>B</b>', 'In đậm (Ctrl+B)'], ['italic', '<i>I</i>', 'In nghiêng (Ctrl+I)'],
+    ['underline', '<u>U</u>', 'Gạch chân (Ctrl+U)'], ['removeFormat', '⌫', 'Xoá định dạng']].forEach(([cmd, label, title]) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = label;
+    b.title = title;
+    // mousedown + preventDefault: giữ nguyên vùng chữ đang bôi đen
+    b.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      document.execCommand('styleWithCSS', false, false);
+      document.execCommand(cmd);
+      document.activeElement?.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    fmtBar.append(b);
+  });
+  document.body.append(fmtBar);
+  return fmtBar;
+}
+function showFormatBar(el) {
+  const bar = formatBar();
+  const r = el.getBoundingClientRect();
+  bar.style.left = `${Math.max(4, r.left + window.scrollX)}px`;
+  bar.style.top = `${r.top + window.scrollY}px`;
+  bar.classList.add('is-on');
+}
+function hideFormatBar() { fmtBar?.classList.remove('is-on'); }
+
+// Bỏ định dạng thừa trình duyệt có thể sinh ra (font, span style) — chỉ giữ b/strong/i/em/u.
+function hasFormatting(el) { return Boolean(el.querySelector(FMT)); }
 
 function markText(el, mode, key) {
   const original = fingerprint(el);
@@ -61,7 +112,7 @@ function markText(el, mode, key) {
   el.setAttribute('contenteditable', 'true');
   el.spellcheck = false;
 
-  el.addEventListener('focus', () => { typed = false; el.classList.add('cms-editing'); });
+  el.addEventListener('focus', () => { typed = false; el.classList.add('cms-editing'); showFormatBar(el); });
   el.addEventListener('input', () => { typed = true; });
   el.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
@@ -76,6 +127,7 @@ function markText(el, mode, key) {
   el.addEventListener('drop', (e) => e.preventDefault());
   el.addEventListener('blur', () => {
     el.classList.remove('cms-editing');
+    hideFormatBar();
     // Chỉ bấm vào rồi bấm ra (không gõ gì) -> không phải thay đổi.
     if (!typed) return;
     typed = false;
@@ -86,7 +138,9 @@ function markText(el, mode, key) {
     }
     dirty = true;
     el.classList.add('cms-dirty');
-    post({ type: 'text', key, mode, value: mode === 't' ? el.textContent : cleanHtml(el) });
+    // Ô chữ thuần có in đậm/nghiêng -> gửi dạng HTML (mode 'h'), GAS đổi mốc t -> h khi lưu.
+    const asHtml = mode === 'h' || hasFormatting(el);
+    post({ type: 'text', key, mode: asHtml ? 'h' : 't', value: asHtml ? cleanHtml(el) : el.textContent });
   });
 }
 
@@ -135,7 +189,7 @@ function initImages() {
 
   const place = (img) => {
     const r = img.getBoundingClientRect();
-    if (r.width < 24 || r.height < 24) return;
+    if (r.width < 12 || r.height < 12) return; // icon nhỏ (lá 26px) vẫn đổi được
     current?.classList.remove('cms-img-target');
     current = img;
     img.classList.add('cms-img-target');
