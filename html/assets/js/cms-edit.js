@@ -13,6 +13,9 @@ function injectStyle() {
   const style = document.createElement('style');
   style.textContent = `
     html.cms-mode [data-reveal] { opacity: 1 !important; transform: none !important; }
+    /* Lớp chữ của slider (.slide__body) để pointer-events:none cho khách -> trong CMS phải bật
+       lại cho mọi mốc, nếu không thì không bấm vào sửa được (vd. slide "Rạn San Hô In 3D"). */
+    html.cms-mode [data-cms-t], html.cms-mode [data-cms-h], html.cms-mode img[data-cms-img] { pointer-events: auto !important; }
     .cms-editable { outline: 1px dashed transparent; outline-offset: 2px; cursor: text; transition: outline-color .15s; }
     .cms-editable:hover { outline-color: rgba(214, 40, 40, .9); }
     .cms-editing { outline: 2px solid #d62828 !important; }
